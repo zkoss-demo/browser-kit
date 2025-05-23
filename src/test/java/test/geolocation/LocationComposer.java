@@ -18,7 +18,7 @@ public class LocationComposer extends SelectorComposer {
     }
 
     public void processLocation(GeolocationPositionResult result){
-        if (result instanceof GeolocationHelper.GeoLocationPosition) {
+        if (result instanceof GeoLocationPosition) {
             Clients.log(result.getPosition().getCoords().getLatitude()+","
             +result.getPosition().getCoords().getLongitude());
         }else{
