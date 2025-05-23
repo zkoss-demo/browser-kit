@@ -1,0 +1,14 @@
+<zk xmlns:h="native">
+    <nodom apply="test.clipboard.ClipboardComposer">
+        <h:h2>copy the text and click the button</h:h2>
+        <vlayout>
+            <button label="read text from clipboard" id="read"/>
+            <textbox readonly="true" id="pastingTarget" multiline="true" rows="5"/>
+        </vlayout>
+        <h:h2>click the button and paste</h:h2>
+        <vlayout>
+        <button label="write text to clipboard" id="write"/>
+        <textbox placeholder="press ctrl+v here" multiline="true" rows="5"/>
+        </vlayout>
+    </nodom>
+</zk>
