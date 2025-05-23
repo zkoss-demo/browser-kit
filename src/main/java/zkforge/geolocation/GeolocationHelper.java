@@ -14,26 +14,26 @@ import java.util.function.Consumer;
  * - create an anchor component to listen to events
  * - need to put geolocation-helper.js in the corresponding path, default is under the same folder as the zul
  */
-public class GeoLocationHelper {
+public class GeolocationHelper {
     public static final String CSS_CLASS = "geolocation-helper";
     public static final String EVENT_NAME = "onGetLocation";
     public static final String GEOLOCATION_HELPER_JS_PATH = "~./js/geolocation-helper.js";
     private static Div anchor;
     private final Consumer<GeolocationPositionResult> callback;
     private Gson gson = new Gson();
-
+    public static final String WIDGET_NAME = GeolocationHelper.class.getSimpleName();
     /**
      * @param callback     the callback to handle the result
      * @param helperJsPath the path of the helper js file
      */
-    public GeoLocationHelper(Consumer<GeolocationPositionResult> callback, String helperJsPath) {
+    public GeolocationHelper(Consumer<GeolocationPositionResult> callback, String helperJsPath) {
         ensureExecutionAvailable();
         this.callback = callback;
         initAnchorComponent(callback);
         initHelperJavaScript(helperJsPath);
     }
 
-    public GeoLocationHelper(Consumer<GeolocationPositionResult> callback) {
+    public GeolocationHelper(Consumer<GeolocationPositionResult> callback) {
         ensureExecutionAvailable();
         this.callback = callback;
         initAnchorComponent(callback);
@@ -48,7 +48,7 @@ public class GeoLocationHelper {
 
 
     public void requestLocation() {
-        Clients.evalJavaScript("requestLocation()");
+        Clients.evalJavaScript(WIDGET_NAME + ".requestLocation()");
     }
 
     /**

@@ -8,17 +8,17 @@ import zkforge.geolocation.*;
 
 public class LocationComposer extends SelectorComposer {
 
-    private GeoLocationHelper geoLocationHelper;
+    private GeolocationHelper geoLocationHelper;
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
-        geoLocationHelper = new GeoLocationHelper(this::processLocation);
+        geoLocationHelper = new GeolocationHelper(this::processLocation);
         geoLocationHelper.requestLocation();
     }
 
     public void processLocation(GeolocationPositionResult result){
-        if (result instanceof GeoLocationHelper.GeoLocationPosition) {
+        if (result instanceof GeolocationHelper.GeoLocationPosition) {
             Clients.log(result.getPosition().getCoords().getLatitude()+","
             +result.getPosition().getCoords().getLongitude());
         }else{
