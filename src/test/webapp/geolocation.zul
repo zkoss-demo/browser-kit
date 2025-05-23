@@ -1,0 +1,6 @@
+<zk>
+    get geo location example
+    <div id="root" apply="test.geolocation.LocationComposer">
+        <button id="getLocation" label="Get Location" />
+    </div>
+</zk>
