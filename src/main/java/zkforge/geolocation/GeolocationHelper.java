@@ -11,17 +11,16 @@ import java.util.function.Consumer;
 /**
  * Based on https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API/Using_the_Geolocation_API
  * simplify the usage of JavaScript geolocation api
- * - create an anchor component to listen to events
- * - need to put geolocation-helper.js in the corresponding path, default is under the same folder as the zul
+ * - create an anchor component to fire events to a server
  */
 public class GeolocationHelper {
-    public static final String CSS_CLASS = "geolocation-helper";
     public static final String EVENT_NAME = "onGetLocation";
-    public static final String GEOLOCATION_HELPER_JS_PATH = "~./js/geolocation-helper.js";
-    private static Div anchor;
+    public static final String WIDGET_NAME = GeolocationHelper.class.getSimpleName();
+    public static final String CSS_CLASS = WIDGET_NAME;
+    public static final String GEOLOCATION_HELPER_JS_PATH = "~./js/" + WIDGET_NAME + ".js";
+    private static Div anchor; /* used to fire events to the server */
     private final Consumer<GeolocationPositionResult> callback;
     private Gson gson = new Gson();
-    public static final String WIDGET_NAME = GeolocationHelper.class.getSimpleName();
     /**
      * @param callback     the callback to handle the result
      * @param helperJsPath the path of the helper js file
@@ -40,7 +39,7 @@ public class GeolocationHelper {
         initHelperJavaScript(GEOLOCATION_HELPER_JS_PATH);
     }
 
-    private static void initHelperJavaScript(String jsPath) {
+    protected static void initHelperJavaScript(String jsPath) {
         Script geolocatlHelperScript = new Script();
         geolocatlHelperScript.setSrc(jsPath);
         geolocatlHelperScript.setPage(Executions.getCurrent().getDesktop().getFirstPage());
@@ -74,11 +73,11 @@ public class GeolocationHelper {
         }
     }
 
-    private static boolean isGeoLocationPosition(Object data) {
+    protected static boolean isGeoLocationPosition(Object data) {
         return ((JSONObject) data).containsKey("coords");
     }
 
-    private static void ensureExecutionAvailable() {
+    protected static void ensureExecutionAvailable() {
         if (Executions.getCurrent() == null) {
             throw new IllegalStateException("This method can only be called when an Execution is available");
         }
