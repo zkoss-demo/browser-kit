@@ -10,6 +10,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
     </properties>
     <url>http://www.zkoss.org</url>
     <description>
@@ -87,7 +88,7 @@
         <profile>
             <id>fresh</id>
             <properties>
-                <revision>1.0.0.FL.${build.date}</revision>
+                <revision>1.0.0.FL.${maven.build.timestamp}</revision>
             </properties>
         </profile>
         <profile>

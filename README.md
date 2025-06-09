@@ -13,3 +13,17 @@ This project is a ZK addon based on ZK CE that wraps various browser built-in Ja
 see src/test/
 
 # Release Process
+1. build jar
+2. change version in `pom.xml` to official version (remove `-SNAPSHOT`)
+3. set tag in GitHub as version (e.g. `v1.0.0`)
+4. Publish to ZK Maven CE repository
+
+## Build jar
+* freshly
+`./release.sh`
+
+* Official
+`./release.sh official`
+
+## Publish to Maven
+[jenkins job]()
