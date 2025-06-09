@@ -2,7 +2,7 @@
 This project is a ZK addon based on ZK CE that wraps various browser built-in JavaScript API in Java.
 
 # The JavaScript API to wrap
-* Geolocation API
+* [Geolocation API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API/Using_the_Geolocation_API)
 * Clipboard API
 * Notification API
 * Web Speech API

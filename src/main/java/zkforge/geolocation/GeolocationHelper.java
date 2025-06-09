@@ -16,9 +16,8 @@ import java.util.function.Consumer;
 public class GeolocationHelper {
     public static final String EVENT_NAME = "onGetLocation";
     public static final String WIDGET_NAME = GeolocationHelper.class.getSimpleName();
-    public static final String CSS_CLASS = "z-" + WIDGET_NAME.toLowerCase();
     public static final String GEOLOCATION_HELPER_JS_PATH = "~./js/" + WIDGET_NAME + ".js";
-    private static Div anchor; /* used to fire events to the server */
+    private static Component anchor; /* used to fire events to the server */
     private final Consumer<GeolocationPositionResult> callback;
     private Gson gson = new Gson();
     /**
@@ -54,13 +53,14 @@ public class GeolocationHelper {
      * client side fire events via anchor component
      */
     protected Component initAnchorComponent(Consumer<GeolocationPositionResult> callback) {
-        anchor = new Div();
-        anchor.setSclass(CSS_CLASS);
+        anchor = new NoDOM(); //a DOM element is unnecessary, we just need a js widget to fire events
+        anchor.setId(WIDGET_NAME); //set the id to be able to find it in the client side
         anchor.setPage(Executions.getCurrent().getDesktop().getFirstPage());
         anchor.addEventListener(EVENT_NAME, event -> {
             GeolocationPositionResult result = parseResult(event.getData());
             callback.accept(result);
         });
+        //FIXME avoid initialize twice in one desktop
         return anchor;
     }
 

@@ -24,7 +24,7 @@ class GeolocationHelper {
      * @private
      */
     static getAnchorWidget() {
-        return zk.Widget.$('.z-' + GeolocationHelper.name.toLowerCase());
+        return zk.Widget.$('$' + GeolocationHelper.name);
     }
 
     /**
