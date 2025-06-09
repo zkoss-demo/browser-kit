@@ -3,16 +3,29 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>zkforge</groupId>
     <artifactId>browser-kit</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
+    <version>${revision}</version>
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <url>http://www.zkoss.org</url>
+    <description>
+    This project is a ZK addon based on ZK CE that wraps various browser built-in JavaScript API in Java.
+    </description>
+    <scm>
+        <url>https://github.com/zkoss-demo/browser-kit</url>
+        <connection>git@github.com:zkoss-demo/browser-kit.git</connection>
+    </scm>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
     <dependencies>
         <dependency>
             <groupId>org.zkoss.zk</groupId>
@@ -49,8 +62,41 @@
                     <useTestScope>true</useTestScope>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>timestamp-property</id>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <name>build.date</name>
+                            <pattern>yyyyMMdd</pattern>
+                            <timeZone>UTC+8</timeZone>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>fresh</id>
+            <properties>
+                <revision>1.0.0.FL.${build.date}</revision>
+            </properties>
+        </profile>
+        <profile>
+            <id>official</id>
+            <properties>
+                <revision>1.0.0</revision>
+            </properties>
+        </profile>
+    </profiles>
     <repositories>
         <repository>
             <id>ZK CE</id>
