@@ -1,4 +1,4 @@
-package zkforge.clipboard;
+package org.zkoss.zkforge.clipboard;
 
 public class ClipboardResult {
     private String status;

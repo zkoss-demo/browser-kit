@@ -29,4 +29,4 @@ see src/test/
 [jenkins job]()
 
 ## License
-* Demo Code - [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
+* Source Code - [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)

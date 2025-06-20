@@ -1,4 +1,4 @@
-package zkforge.geolocation;
+package org.zkoss.zkforge.geolocation;
 
 import com.google.gson.Gson;
 import org.zkoss.json.JSONObject;

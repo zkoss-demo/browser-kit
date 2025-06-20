@@ -1,4 +1,4 @@
-package zkforge.geolocation;
+package org.zkoss.zkforge.geolocation;
 
 // Enum to represent error codes and descriptions
 enum ErrorType {

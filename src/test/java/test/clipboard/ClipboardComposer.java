@@ -3,8 +3,9 @@ package test.clipboard;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.*;
+import org.zkoss.zkforge.clipboard.ClipboardHelper;
+import org.zkoss.zkforge.clipboard.ClipboardResult;
 import org.zkoss.zul.Textbox;
-import zkforge.clipboard.*;
 
 public class ClipboardComposer extends SelectorComposer<Component> {
     @Wire

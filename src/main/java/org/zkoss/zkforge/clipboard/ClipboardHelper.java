@@ -1,4 +1,4 @@
-package zkforge.clipboard;
+package org.zkoss.zkforge.clipboard;
 
 import com.google.gson.Gson;
 import org.zkoss.json.JSONObject;

@@ -1,4 +1,4 @@
-package zkforge.geolocation;
+package org.zkoss.zkforge.geolocation;
 
 public class GeolocationPositionError implements GeolocationPositionResult {
     private final int code; // Error code

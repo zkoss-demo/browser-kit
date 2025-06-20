@@ -1,4 +1,4 @@
-package zkforge.geolocation;
+package org.zkoss.zkforge.geolocation;
 
 public class GeoLocationPosition implements GeolocationPositionResult {
     private GeoLocationCoordinates coords = new GeoLocationCoordinates();

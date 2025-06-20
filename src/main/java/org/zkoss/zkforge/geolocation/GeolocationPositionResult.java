@@ -1,4 +1,4 @@
-package zkforge.geolocation;
+package org.zkoss.zkforge.geolocation;
 
 /**
  * just a marker interface to generalize the result of geolocation api

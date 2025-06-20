@@ -1,4 +1,4 @@
-package zkforge.geolocation;
+package org.zkoss.zkforge.geolocation;
 
 public class GeoLocationCoordinates {
     public double latitude;
