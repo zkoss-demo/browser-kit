@@ -28,10 +28,14 @@
         </license>
     </licenses>
     <dependencies>
+        <!-- 
+            Set to "provided" to ensure this addon does not override or conflict with the ZK version managed by the host application. Since browser-kit is typically used as an optional extension in projects that already include ZK.
+        -->
         <dependency>
             <groupId>org.zkoss.zk</groupId>
             <artifactId>zul</artifactId>
             <version>9.6.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
