@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Build artifacts using the extracted artifact ID
+mvn source:jar javadoc:jar repository:bundle-create --batch-mode -DskipTests
+./release/prepare-upload.sh
