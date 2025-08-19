@@ -35,7 +35,8 @@
             <groupId>org.zkoss.zk</groupId>
             <artifactId>zul</artifactId>
             <version>9.6.0</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
