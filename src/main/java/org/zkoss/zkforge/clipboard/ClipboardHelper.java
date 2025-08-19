@@ -32,11 +32,13 @@ public class ClipboardHelper {
     }
 
     public void writeText(String text) {
-        Clients.evalJavaScript(WIDGET_NAME + ".writeText('" + text + "')");
+        String jsCode = String.format("%s.writeText('%s')", WIDGET_NAME, text);
+        Clients.evalJavaScript(jsCode);
     }
 
     public void readText() {
-        Clients.evalJavaScript(WIDGET_NAME + ".readText()");
+        String jsCode = String.format("%s.readText()", WIDGET_NAME);
+        Clients.evalJavaScript(jsCode);
     }
 
     protected void initAnchorComponent() {

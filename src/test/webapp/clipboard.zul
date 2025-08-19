@@ -1,11 +1,13 @@
 <zk xmlns:h="native">
     <nodom apply="test.clipboard.ClipboardComposer">
-        <h:h2>copy the text and click the button</h:h2>
+        <h:h2>read text from clipboard</h:h2>
+        copy a text from somewhere else and click the button, it puts your copied text into the textbox below.
         <vlayout>
-            <button label="read text from clipboard" id="read"/>
+            <button label="read text" id="read"/>
             <textbox readonly="true" id="pastingTarget" multiline="true" rows="5"/>
         </vlayout>
-        <h:h2>click the button and paste</h:h2>
+        <h:h2>write text to clipboard</h:h2>
+        click the button and press ctrl+v in the textbox below, it pastes the content from the clipboard (sent from the server-side)
         <vlayout>
         <button label="write text to clipboard" id="write"/>
         <textbox placeholder="press ctrl+v here" multiline="true" rows="5"/>
