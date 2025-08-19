@@ -1,13 +1,13 @@
 # Overview
-This project is a ZK addon based on ZK CE that wraps various browser built-in JavaScript API in Java.
+This project is a simple ZK addon based on ZK CE (compact edition) that wraps various browser built-in JavaScript API in Java.
 
 # The JavaScript API to wrap
 * [Geolocation API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API/Using_the_Geolocation_API)
-* Clipboard API
-* Notification API
-* Web Speech API
-* MediaDevices.getUserMedia
-* Drag and Drop API
+* [Clipboard API](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API)
+* [Notification API](https://developer.mozilla.org/en-US/docs/Web/API/Notification)
+* [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
+* [MediaDevices](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices)
+* [Drag and Drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API)
 
 # Usage Examples
 see src/test/
