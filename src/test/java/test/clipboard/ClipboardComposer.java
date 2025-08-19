@@ -19,11 +19,22 @@ public class ClipboardComposer extends SelectorComposer<Component> {
     }
 
     public void processData(ClipboardResult result){
-        pastingTarget.setValue(result.getText());
+        if (result.isSuccess()){
+            if (result.getAction() == ClipboardHelper.ClipboardAction.READ) {
+                pastingTarget.setValue(result.getText());
+            }
+        } else {
+            System.err.println("Error: " + result.getError());
+        }
     }
 
     @Listen("onClick = #read ")
     public void read(){
         clipboardHelper.readText();
+    }
+
+    @Listen("onClick = #write ")
+    public void write(){
+        clipboardHelper.writeText("content from server");
     }
 }
