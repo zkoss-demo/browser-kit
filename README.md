@@ -10,7 +10,15 @@ This project is a simple ZK addon based on ZK CE (compact edition) that wraps va
 * [Drag and Drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API)
 
 # Usage Examples
-see src/test/
+see *.java and *.zul under src/test/
+
+# ClipboardHelper
+
+The ClipboardHelper provides access to the browser's Clipboard API for reading and writing clipboard content.
+## Important Notes
+⚠️ **Its methods must be called within an event listener**: ClipboardHelper operations must be triggered from user interactions (click, keypress, etc.) due to browser security restrictions. Calling outside of event handlers will fail.
+
+⚠️ **Security concern**: When handling clipboard content, you should sanitize user input yourself before using it in your application to prevent potential security vulnerabilities.
 
 # Release Process
 1. change version in `pom.xml` to official version
