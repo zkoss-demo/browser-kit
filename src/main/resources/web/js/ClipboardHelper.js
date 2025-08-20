@@ -9,16 +9,17 @@ class ClipboardHelper {
         if (navigator.clipboard) {
             navigator.clipboard.writeText(text)
                 .then(() => {
-                    this.fireEventToServer({ status: 'success', action: 'write' });
+                    this.fireEventToServer({ action: 'WRITE' });
                 })
                 .catch(error => {
                     this.fireEventToServer({
-                        error: 'Failed to write to clipboard',
-                        details: error.message
+                        action: 'WRITE',
+                        error: 'Failed to write to clipboard: ' + error.message
                     });
                 });
         } else {
             this.fireEventToServer({
+                action: 'WRITE',
                 error: 'Clipboard API not supported by this browser.'
             });
         }
@@ -32,18 +33,19 @@ class ClipboardHelper {
             navigator.clipboard.readText()
                 .then(text => {
                     this.fireEventToServer({
-                        status: 'success',
-                        action: 'read',
+                        action: 'READ',
                         text: text
                     });
                 })
                 .catch(error => {
                     this.fireEventToServer({
+                        action: 'READ',
                         error: error.message
                     });
                 });
         } else {
             this.fireEventToServer({
+                action: 'READ',
                 error: 'Clipboard API not supported by this browser.'
             });
         }
