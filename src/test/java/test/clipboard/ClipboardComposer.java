@@ -7,6 +7,9 @@ import org.zkoss.zkforge.clipboard.ClipboardHelper;
 import org.zkoss.zkforge.clipboard.ClipboardResult;
 import org.zkoss.zul.Textbox;
 
+/**
+ * demonstrates how to use the ClipboardHelper.
+ */
 public class ClipboardComposer extends SelectorComposer<Component> {
     @Wire
     private Textbox pastingTarget;
