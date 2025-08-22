@@ -1,5 +1,5 @@
 class ClipboardHelper {
-    static CLIPBOARD_DATA_EVENT = 'onClipboardData';
+    static CLIPBOARD_ACTION_EVENT = 'onClipboardAction';
 
     /**
      * Writes text to the clipboard
@@ -189,7 +189,7 @@ class ClipboardHelper {
      * @private
      */
     static fireEventToServer(data) {
-        this.getAnchorWidget().fire(ClipboardHelper.CLIPBOARD_DATA_EVENT,
+        this.getAnchorWidget().fire(ClipboardHelper.CLIPBOARD_ACTION_EVENT,
                                     data,
                                     { toServer: true });
     }

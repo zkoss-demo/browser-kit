@@ -4,14 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.zkoss.json.JSONObject;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.*;
 
 import java.util.Base64;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 /**
@@ -30,21 +26,10 @@ import java.util.function.Consumer;
  * <p>Example usage:</p>
  * <pre>{@code
  * // Reading from clipboard
- * ClipboardHelper.readText(result -> {
- *     if (result.isSuccess()) {
- *         String text = result.getText();
- *         // Handle clipboard text
- *     } else {
- *         // Handle error
- *     }
- * });
+ * String text = ClipboardHelper.readText();
  * 
  * // Writing to clipboard
- * ClipboardHelper.writeText("Hello World", result -> {
- *     if (result.isSuccess()) {
- *         // Text successfully written
- *     }
- * });
+ * ClipboardHelper.writeText("Hello World");
  * }</pre>
  * 
  * @see <a href="https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API">Clipboard API - MDN</a>
@@ -53,30 +38,31 @@ public class ClipboardHelper {
     public static final String WIDGET_NAME = ClipboardHelper.class.getSimpleName();
     public static final String CSS_CLASS = "z-" + WIDGET_NAME.toLowerCase();
     public static final String CLIPBOARD_HELPER_JS_PATH = "~./js/" + WIDGET_NAME + ".js";
-    private static Div anchor;
-    private final Consumer<ClipboardResult> callback;
+    public static final String ON_CLIPBOARD_ACTION = "onClipboardAction";
+    private Div anchor;
+    private final Consumer<ClipboardResult> textCallback;
     private final Consumer<ClipboardImageResult> imageCallback;
 
     /**
      * Creates a new ClipboardHelper instance with the specified callback for text operations.
      * 
-     * @param callback the callback to handle clipboard text operation results
+     * @param textCallback the callback to handle clipboard text operation results
      * @throws IllegalStateException if no ZK execution context is available
      */
-    public ClipboardHelper(Consumer<ClipboardResult> callback) {
-        this(callback, null);
+    public ClipboardHelper(Consumer<ClipboardResult> textCallback) {
+        this(textCallback, null);
     }
 
     /**
      * Creates a new ClipboardHelper instance with callbacks for both text and image operations.
      * 
-     * @param callback the callback to handle clipboard text operation results
+     * @param textCallback the callback to handle clipboard text operation results
      * @param imageCallback the callback to handle clipboard image operation results, can be null
      * @throws IllegalStateException if no ZK execution context is available
      */
-    public ClipboardHelper(Consumer<ClipboardResult> callback, Consumer<ClipboardImageResult> imageCallback) {
+    public ClipboardHelper(Consumer<ClipboardResult> textCallback, Consumer<ClipboardImageResult> imageCallback) {
         ensureExecutionAvailable();
-        this.callback = callback;
+        this.textCallback = textCallback;
         initAnchorComponent();
         initHelperJavaScript(CLIPBOARD_HELPER_JS_PATH);
         this.imageCallback = imageCallback;
@@ -140,14 +126,14 @@ public class ClipboardHelper {
         anchor = new Div();
         anchor.setSclass(CSS_CLASS);
         anchor.setPage(Executions.getCurrent().getDesktop().getFirstPage());
-        anchor.addEventListener("onClipboardData", event -> {
+        anchor.addEventListener(ON_CLIPBOARD_ACTION, event -> {
             ClipboardResult result = parseResponse((JSONObject) event.getData());
 
             // Check which callback to call based on result type
             if (result instanceof ClipboardImageResult && imageCallback != null) {
                 imageCallback.accept((ClipboardImageResult) result);
             } else {
-                callback.accept(result);
+                textCallback.accept(result);
             }
         });
     }
