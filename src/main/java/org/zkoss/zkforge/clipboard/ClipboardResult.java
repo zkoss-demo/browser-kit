@@ -1,5 +1,7 @@
 package org.zkoss.zkforge.clipboard;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Result object for clipboard operations containing either success data or error information.
  * 
@@ -7,8 +9,11 @@ package org.zkoss.zkforge.clipboard;
  * Use {@code isSuccess()} for convenient success checking.</p>
  */
 public class ClipboardResult {
+    @Expose
     private ClipboardAction action;
+    @Expose
     private String text;
+    @Expose
     private String error;
 
     /**
@@ -54,5 +59,32 @@ public class ClipboardResult {
      */
     public String getError() {
         return error;
+    }
+
+    /**
+     * Sets the clipboard action that was performed.
+     * 
+     * @param action the clipboard action
+     */
+    void setAction(ClipboardAction action) {
+        this.action = action;
+    }
+
+    /**
+     * Sets the text content for clipboard operations.
+     * 
+     * @param text the text content
+     */
+    void setText(String text) {
+        this.text = text;
+    }
+
+    /**
+     * Sets the error message if the operation failed.
+     * 
+     * @param error the error message, or null if the operation succeeded
+     */
+    void setError(String error) {
+        this.error = error;
     }
 }

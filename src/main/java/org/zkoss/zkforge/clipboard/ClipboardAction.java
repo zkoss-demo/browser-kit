@@ -12,5 +12,6 @@ public enum ClipboardAction {
     /**
      * Writing text to the clipboard.
      */
-    WRITE
+    WRITE,
+    READ_IMAGE,
 }
