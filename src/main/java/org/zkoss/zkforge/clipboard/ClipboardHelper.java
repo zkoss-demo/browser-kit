@@ -3,7 +3,8 @@ package org.zkoss.zkforge.clipboard;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.zkoss.json.JSONObject;
-import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.*;
+import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.*;
 
@@ -123,9 +124,11 @@ public class ClipboardHelper {
      * @throws IllegalStateException if no image callback was provided in the constructor
      */
     protected void initAnchorComponent() {
+        Desktop desktop = Executions.getCurrent().getDesktop();
+        avoidDuplicateAnchor(desktop);
         anchor = new Div();
         anchor.setSclass(CSS_CLASS);
-        anchor.setPage(Executions.getCurrent().getDesktop().getFirstPage());
+        anchor.setPage(desktop.getFirstPage());
         anchor.addEventListener(ON_CLIPBOARD_ACTION, event -> {
             ClipboardResult result = parseResponse((JSONObject) event.getData());
 
@@ -136,6 +139,12 @@ public class ClipboardHelper {
                 textCallback.accept(result);
             }
         });
+    }
+
+    private void avoidDuplicateAnchor(Desktop desktop) {
+        if (!Selectors.find(desktop.getFirstPage(), "." + CSS_CLASS).isEmpty()){
+            throw new IllegalStateException("A ClipboardHelper instance is already initialized in this desktop. Create only one instance per desktop.");
+        };
     }
 
     public void readImage() {
