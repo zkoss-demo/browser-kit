@@ -1,63 +1,31 @@
-
-class GeolocationHelper {
-    static GET_LOCATION_EVENT = 'onGetLocation';
-
-    /**
-     * Requests the current geolocation of the device
-     */
-    static requestLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                GeolocationHelper.handleSuccess,
-                GeolocationHelper.handleError
-            );
-        } else {
-            GeolocationHelper.fireEventToServer({
-                error: "Geolocation is not supported by this browser."
-            });
+window.GeolocationHelper = {
+    getCurrentPosition: function() {
+        if (!navigator.geolocation) {
+            zAu.send(new zk.Event(zk.Desktop._dt, 'onGetLocation', {
+                error: {
+                    code: 0,
+                    message: 'Geolocation API not available'
+                }
+            }));
+            return;
         }
+        /**
+         * https://developer.mozilla.org/en-US/docs/Web/API/GeolocationPosition
+         * https://developer.mozilla.org/en-US/docs/Web/API/GeolocationCoordinates
+         */
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                // Send success result with position data
+                zAu.send(new zk.Event(zk.Desktop._dt, 'onGetLocation', {
+                    position: JSON.stringify(position)
+                }));
+            },
+            function(error) {
+                zAu.send(new zk.Event(zk.Desktop._dt, 'onGetLocation', {
+                    error: JSON.stringify(error)
+                }));
+            }
+        );
     }
+};
 
-    /**
-     * Gets the anchor widget for firing events
-     * @returns {zk.Widget} The anchor widget
-     * @private
-     */
-    static getAnchorWidget() {
-        return zk.Widget.$('$' + GeolocationHelper.name);
-    }
-
-    /**
-     * Handles successful geolocation retrieval
-     * @param {GeolocationPosition} position - The position object
-     * @private
-     */
-    static handleSuccess(position) {
-        GeolocationHelper.fireEventToServer(position.toJSON());
-    }
-
-    /**
-     * Handles geolocation errors
-     * @param {GeolocationPositionError} error - The error object
-     * @private
-     */
-    static handleError(error) {
-        GeolocationHelper.fireEventToServer(error.toJSON());
-    }
-
-    /**
-     * Fires an event to the server with the given data
-     * @param {Object} data - The data to send to the server
-     * @private
-     */
-    static fireEventToServer(data) {
-        const widget = GeolocationHelper.getAnchorWidget();
-        if (widget) {
-            widget.fire(
-                GeolocationHelper.GET_LOCATION_EVENT,
-                data,
-                { toServer: true }
-            );
-        }
-    }
-}
