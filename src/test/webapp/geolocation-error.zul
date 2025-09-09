@@ -1,0 +1,13 @@
+<zk xmlns:ca="client/attribute">
+    get geo location error example
+        <radiogroup >
+            <radio label="simulatePermissionDenied" ca:onclick="GeolocationMock.simulatePermissionDenied();"/>
+            <radio label="simulatePositionUnavailable" ca:onclick="GeolocationMock.simulatePositionUnavailable();"/>
+            <radio label="simulateTimeout" ca:onclick="GeolocationMock.simulateTimeout();"/>
+        </radiogroup>
+    <div id="root" apply="test.geolocation.LocationComposer">
+        <button id="getLocation" label="Get Location" />
+        <label id="locationLabel" value="Location will be displayed here" />
+    </div>
+    <script src="/geolocation-error.js"/>
+</zk>

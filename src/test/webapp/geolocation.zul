@@ -4,5 +4,4 @@
         <button id="getLocation" label="Get Location" />
         <label id="locationLabel" value="Location will be displayed here" />
     </div>
-    <timer/>
 </zk>

@@ -7,7 +7,7 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkforge.geolocation.GeoLocationPosition;
 import org.zkoss.zkforge.geolocation.GeolocationHelper;
-import org.zkoss.zkforge.geolocation.GeolocationPositionResult;
+import org.zkoss.zkforge.geolocation.GeolocationPositionError;
 import org.zkoss.zul.Label;
 
 public class LocationComposer extends SelectorComposer {
@@ -19,21 +19,25 @@ public class LocationComposer extends SelectorComposer {
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
-        geoLocationHelper = new GeolocationHelper(this::processLocation);
-        geoLocationHelper.requestLocation();
+        // Use singleton pattern with separate callbacks for success and error
+        geoLocationHelper = new GeolocationHelper(
+            this::handleLocationSuccess,
+            this::handleLocationError
+        );
+        geoLocationHelper.getCurrentPosition();
     }
 
-    public void processLocation(GeolocationPositionResult result){
-        if (result instanceof GeoLocationPosition) {
-            locationLabel.setValue(result.getPosition().getCoords().getLatitude()+","
-                    +result.getPosition().getCoords().getLongitude());
-        }else{
-            Clients.log("error: " + result.getError().getMessage());
-        }
+    private void handleLocationSuccess(GeoLocationPosition position) {
+        locationLabel.setValue(position.toString());
+    }
+    
+    private void handleLocationError(GeolocationPositionError error) {
+        Clients.log("Geolocation error: " + error.getMessage());
+        locationLabel.setValue("Location unavailable: " + error.getMessage());
     }
 
     @Listen("onClick = #getLocation")
     public void getLocation(){
-        geoLocationHelper.requestLocation();
+        geoLocationHelper.getCurrentPosition();
     }
 }
