@@ -1,12 +1,12 @@
 window.GeolocationHelper = {
     getCurrentPosition: function() {
         if (!navigator.geolocation) {
-            zAu.send(new zk.Event(zk.Desktop._dt, 'onGetLocation', {
-                error: {
+            this.fireEvent({
+                error: JSON.stringify({
                     code: 0,
                     message: 'Geolocation API not available'
-                }
-            }));
+                })
+            });
             return;
         }
         /**
@@ -14,18 +14,19 @@ window.GeolocationHelper = {
          * https://developer.mozilla.org/en-US/docs/Web/API/GeolocationCoordinates
          */
         navigator.geolocation.getCurrentPosition(
-            function(position) {
-                // Send success result with position data
-                zAu.send(new zk.Event(zk.Desktop._dt, 'onGetLocation', {
+            (position) => {
+                this.fireEvent({
                     position: JSON.stringify(position)
-                }));
+                });
             },
-            function(error) {
-                zAu.send(new zk.Event(zk.Desktop._dt, 'onGetLocation', {
+            (error) => {
+                this.fireEvent({
                     error: JSON.stringify(error)
-                }));
+                });
             }
         );
-    }
+    },
+    fireEvent: function(data) {
+        zAu.send(new zk.Event(zk.Desktop._dt, 'onGetLocation', data));
+    },
 };
-
