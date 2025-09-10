@@ -1,14 +1,9 @@
 package org.zkoss.zkforge.clipboard;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.zkoss.json.JSONObject;
 import org.zkoss.zk.ui.*;
-import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.*;
 
-import java.util.Base64;
 import java.util.function.Consumer;
 
 /**
@@ -32,182 +27,93 @@ import java.util.function.Consumer;
  * // Writing to clipboard
  * ClipboardHelper.writeText("Hello World");
  * }</pre>
- * 
- * @see <a href="https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API">Clipboard API - MDN</a>
+ *
+ * ClipboardHelper with singleton desktop-level result handling pattern.
+ * Only one helper of this type is allowed per page.
+ * Based on https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API
  */
 public class ClipboardHelper {
-    public static final String WIDGET_NAME = ClipboardHelper.class.getSimpleName();
-    public static final String CSS_CLASS = "z-" + WIDGET_NAME.toLowerCase();
-    public static final String CLIPBOARD_HELPER_JS_PATH = "~./js/" + WIDGET_NAME + ".js";
-    public static final String ON_CLIPBOARD_ACTION = "onClipboardAction";
-    private Div anchor;
-    private final Consumer<ClipboardResult> textCallback;
-    private final Consumer<ClipboardImageResult> imageCallback;
+    protected static final String CLIPBOARD_HELPER_KEY = "browserkit.clipboardhelper";
+    protected static String CLIPBOARD_HELPER_JS_PATH = "~./js/ClipboardHelper.js";
+    public static final String EVENT_NAME = "onClipboardAction";
+    protected Script clipboardHelperScript;
 
-    /**
-     * Creates a new ClipboardHelper instance with the specified callback for text operations.
-     * 
-     * @param textCallback the callback to handle clipboard text operation results
-     * @throws IllegalStateException if no ZK execution context is available
-     */
+    protected Consumer<ClipboardResult> textCallback = r -> {};
+    protected Consumer<ClipboardImageResult> imageCallback = r -> {};
+    protected ClipboardActionListener listener;
+    protected Desktop desktop;
+
     public ClipboardHelper(Consumer<ClipboardResult> textCallback) {
         this(textCallback, null);
     }
 
-    /**
-     * Creates a new ClipboardHelper instance with callbacks for both text and image operations.
-     * 
-     * @param textCallback the callback to handle clipboard text operation results
-     * @param imageCallback the callback to handle clipboard image operation results, can be null
-     * @throws IllegalStateException if no ZK execution context is available
-     */
     public ClipboardHelper(Consumer<ClipboardResult> textCallback, Consumer<ClipboardImageResult> imageCallback) {
         ensureExecutionAvailable();
-        this.textCallback = textCallback;
-        initAnchorComponent();
-        initHelperJavaScript(CLIPBOARD_HELPER_JS_PATH);
-        this.imageCallback = imageCallback;
+        ensureDesktopScopeSingleton();
+        setCallbacks(textCallback, imageCallback);
+        addPageListener();
+        addHelperJavaScript(CLIPBOARD_HELPER_JS_PATH);
     }
 
-    /**
-     * Initializes the JavaScript helper script for clipboard operations.
-     * 
-     * @param jsPath the path to the JavaScript helper file
-     */
-    protected void initHelperJavaScript(String jsPath) {
-        Script clipboardHelperScript = new Script();
+    protected void setCallbacks(Consumer<ClipboardResult> textCallback, Consumer<ClipboardImageResult> imageCallback) {
+        this.textCallback = textCallback != null ? textCallback : (r -> {});
+        this.imageCallback = imageCallback != null ? imageCallback : (r -> {});
+    }
+
+    protected void ensureDesktopScopeSingleton() {
+        desktop = Executions.getCurrent().getDesktop();
+        // Enforce singleton constraint
+        if (desktop.getAttribute(CLIPBOARD_HELPER_KEY) != null) {
+            throw new IllegalStateException(
+                "Only one ClipboardHelper allowed per page. " +
+                "Existing instance found.");
+        }
+        desktop.setAttribute(CLIPBOARD_HELPER_KEY, this);
+    }
+
+    protected void addHelperJavaScript(String jsPath) {
+        clipboardHelperScript = new Script();
         clipboardHelperScript.setSrc(jsPath);
-        clipboardHelperScript.setPage(Executions.getCurrent().getDesktop().getFirstPage());
+        clipboardHelperScript.setPage(desktop.getFirstPage());
     }
 
-    /**
-     * Writes the specified text to the clipboard.
-     * 
-     * <p><strong>Important:</strong> This method must be called from within a user-initiated
-     * event handler (e.g., button click) due to browser security restrictions.</p>
-     * 
-     * @param text the text to write to the clipboard
-     */
+    protected void removeHelperJavaScript() {
+        clipboardHelperScript.detach();
+    }
+
+    protected void addPageListener() {
+        listener = new ClipboardActionListener();
+        listener.setCallbacks(textCallback, imageCallback);
+        desktop.getFirstPage().addEventListener(EVENT_NAME, listener);
+    }
+
+    protected void removePageListener() {
+        desktop.getFirstPage().removeEventListener(EVENT_NAME, listener);
+    }
+
     public void writeText(String text) {
-        String jsCode = String.format("%s.writeText('%s')", WIDGET_NAME, text);
-        Clients.evalJavaScript(jsCode);
+        Clients.evalJavaScript("ClipboardHelper.writeText('" + text + "')");
     }
 
-    /**
-     * Reads text from the clipboard.
-     * 
-     * <p>The result will be provided asynchronously through the callback specified
-     * in the constructor.</p>
-     * 
-     * <p><strong>Important:</strong> This method must be called from within a user-initiated
-     * event handler (e.g., button click) due to browser security restrictions.</p>
-     */
     public void readText() {
-        String jsCode = String.format("%s.readText()", WIDGET_NAME);
-        Clients.evalJavaScript(jsCode);
-    }
-
-    /**
-     * Initializes the anchor component that receives clipboard operation events from JavaScript.
-     * Reads image data from the clipboard.
-     * 
-     * <p>The result will be provided asynchronously through the image callback specified
-     * in the constructor. If no image callback was provided, this method will throw an exception.</p>
-     * 
-     * <p><strong>Important:</strong> This method must be called from within a user-initiated
-     * event handler (e.g., button click) due to browser security restrictions.</p>
-     * 
-     * <p><strong>Browser Support:</strong> This method requires modern browser support for
-     * the Clipboard API read() method. Supported in Chrome 88+, Firefox 127+, and Edge 88+.
-     * Limited support in Safari.</p>
-     * 
-     * @throws IllegalStateException if no image callback was provided in the constructor
-     */
-    protected void initAnchorComponent() {
-        Desktop desktop = Executions.getCurrent().getDesktop();
-        avoidDuplicateAnchor(desktop);
-        anchor = new Div();
-        anchor.setSclass(CSS_CLASS);
-        anchor.setPage(desktop.getFirstPage());
-        anchor.addEventListener(ON_CLIPBOARD_ACTION, event -> {
-            ClipboardResult result = parseResponse((JSONObject) event.getData());
-
-            // Check which callback to call based on result type
-            if (result instanceof ClipboardImageResult && imageCallback != null) {
-                imageCallback.accept((ClipboardImageResult) result);
-            } else {
-                textCallback.accept(result);
-            }
-        });
-    }
-
-    private void avoidDuplicateAnchor(Desktop desktop) {
-        if (!Selectors.find(desktop.getFirstPage(), "." + CSS_CLASS).isEmpty()){
-            throw new IllegalStateException("A ClipboardHelper instance is already initialized in this desktop. Create only one instance per desktop.");
-        };
+        Clients.evalJavaScript("ClipboardHelper.readText()");
     }
 
     public void readImage() {
-        if (imageCallback == null) {
-            throw new IllegalStateException("Image callback not provided. Use ClipboardHelper(Consumer<ClipboardResult>, Consumer<ClipboardImageResult>) constructor to enable image support.");
-        }
-        String jsCode = String.format("%s.readImage()", WIDGET_NAME);
-        Clients.evalJavaScript(jsCode);
-    }
-
-    private static final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-
-    /**
-     * Parses the JSON response from JavaScript clipboard operations into a ClipboardResult object.
-     * 
-     * <p>The JavaScript sends action as uppercase strings ('READ', 'WRITE') which are automatically
-     * mapped to the ClipboardAction enum values.</p>
-     * 
-     * @param data the JSON response from JavaScript
-     * @return the parsed ClipboardResult
-     */
-    protected ClipboardResult parseResponse(JSONObject data){
-        if (ClipboardAction.READ_IMAGE.toString().equals(data.get("action"))){
-            return parseImageResponse(data);
-        }else{
-            return gson.fromJson(data.toString(), ClipboardResult.class);
-        }
+        // imageCallback is always non-null now
+        Clients.evalJavaScript("ClipboardHelper.readImage()");
     }
 
     /**
-     * Parses the JSON response from JavaScript clipboard image operations into a ClipboardImageResult object.
-     * 
-     * <p>The JavaScript sends image data as Base64-encoded strings which are automatically
-     * decoded into byte arrays.</p>
-     * 
-     * @param data the JSON response from JavaScript
-     * @return the parsed ClipboardImageResult
+     * Dispose this helper, removing the page listener and the helper JavaScript.
+     * After calling this method, this instance should not be used anymore.
      */
-    protected ClipboardImageResult parseImageResponse(JSONObject data) {
-        // Use Gson to handle most fields automatically
-        ClipboardImageResult result = gson.fromJson(data.toString(), ClipboardImageResult.class);
-        
-        // Handle imageData separately with Base64 decoding
-        if (data.get("imageData") != null) {
-            try {
-                String base64Data = data.get("imageData").toString();
-                byte[] imageBytes = Base64.getDecoder().decode(base64Data);
-                result.setImageData(imageBytes);
-            } catch (IllegalArgumentException e) {
-                // If Base64 decoding fails, set error
-                result.setError("Invalid image data format");
-                return result;
-            }
-        }
-        
-        return result;
+    public void dispose() {
+        desktop.removeAttribute(CLIPBOARD_HELPER_KEY);
+        removePageListener();
+        removeHelperJavaScript();
     }
 
-    /**
-     * Ensures that a ZK execution context is available for clipboard operations.
-     * 
-     * @throws IllegalStateException if no ZK execution context is available
-     */
     protected static void ensureExecutionAvailable() {
         if (Executions.getCurrent() == null) {
             throw new IllegalStateException("This method can only be called when an Execution is available");

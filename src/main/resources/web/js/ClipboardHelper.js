@@ -175,22 +175,11 @@ class ClipboardHelper {
     }
 
     /**
-     * Gets the anchor widget for firing events
-     * @returns {zk.Widget} The anchor widget
-     * @private
-     */
-    static getAnchorWidget() {
-        return zk.Widget.$('.z-'+ClipboardHelper.name.toLowerCase());
-    }
-
-    /**
      * Fires an event to the server with the given data
      * @param {Object} data - The data to send to the server
      * @private
      */
     static fireEventToServer(data) {
-        this.getAnchorWidget().fire(ClipboardHelper.CLIPBOARD_ACTION_EVENT,
-                                    data,
-                                    { toServer: true });
+        zAu.send(new zk.Event(null, ClipboardHelper.CLIPBOARD_ACTION_EVENT, data));
     }
 }
