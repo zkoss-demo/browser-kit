@@ -12,7 +12,7 @@ public class GeolocationResultListener implements EventListener<Event> {
     private static final Logger log = LoggerFactory.getLogger(GeolocationResultListener.class);
 
     protected static final Gson GSON = new Gson();
-    protected Consumer<GeoLocationPosition> positionCallback;
+    protected Consumer<GeolocationPosition> positionCallback;
     protected Consumer<GeolocationPositionError> errorCallback;
     protected Event handledEvent;
 
@@ -29,7 +29,7 @@ public class GeolocationResultListener implements EventListener<Event> {
         handledEvent = event;
         JSONObject data = (JSONObject)event.getData();
         if (isSuccess(data)){
-            GeoLocationPosition geoLocationPosition = parsePosition(data);
+            GeolocationPosition geoLocationPosition = parsePosition(data);
             positionCallback.accept(geoLocationPosition);
 
         }else{
@@ -42,15 +42,15 @@ public class GeolocationResultListener implements EventListener<Event> {
         return data.get("position")!=null;
     }
 
-    protected static GeoLocationPosition parsePosition(JSONObject data) {
-        return GSON.fromJson(data.get("position").toString(), GeoLocationPosition.class);
+    protected static GeolocationPosition parsePosition(JSONObject data) {
+        return GSON.fromJson(data.get("position").toString(), GeolocationPosition.class);
     }
 
     protected static GeolocationPositionError parseError(JSONObject data) {
         return GSON.fromJson(data.get("error").toString(), GeolocationPositionError.class);
     }
 
-    public void setCallbacks(Consumer<GeoLocationPosition> positionCallback,
+    public void setCallbacks(Consumer<GeolocationPosition> positionCallback,
                            Consumer<GeolocationPositionError> errorCallback) {
         this.positionCallback = positionCallback;
         this.errorCallback = errorCallback;

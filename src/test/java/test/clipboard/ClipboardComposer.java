@@ -3,8 +3,7 @@ package test.clipboard;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.*;
-import org.zkoss.zkforge.clipboard.ClipboardHelper;
-import org.zkoss.zkforge.clipboard.ClipboardResult;
+import org.zkoss.zkforge.clipboard.*;
 import org.zkoss.zul.Textbox;
 
 /**
@@ -23,7 +22,7 @@ public class ClipboardComposer extends SelectorComposer<Component> {
 
     public void processData(ClipboardResult result){
         if (result.isSuccess()){
-            if (result.getAction() == ClipboardHelper.ClipboardAction.READ) {
+            if (result.getAction() == ClipboardAction.READ) {
                 pastingTarget.setValue(result.getText());
             }
         } else {

@@ -35,8 +35,8 @@ public class GeolocationPositionError implements GeolocationPositionResult {
     }
 
     @Override
-    public GeoLocationPosition getPosition() {
-        throw new RuntimeException("not an " + GeoLocationPosition.class);
+    public GeolocationPosition getPosition() {
+        throw new RuntimeException("not an " + GeolocationPosition.class);
     }
 
     @Override

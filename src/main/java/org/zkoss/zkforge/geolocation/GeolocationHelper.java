@@ -18,12 +18,12 @@ public class GeolocationHelper {
     public static final String EVENT_NAME = "onGetLocation";
     protected Script geolocationHelperScript;
 
-    protected Consumer<GeoLocationPosition> positionCallback;
+    protected Consumer<GeolocationPosition> positionCallback;
     protected Consumer<GeolocationPositionError> errorCallback;
     protected GeolocationResultListener listener;
     protected Desktop desktop;
 
-    public GeolocationHelper(Consumer<GeoLocationPosition> positionCallback,
+    public GeolocationHelper(Consumer<GeolocationPosition> positionCallback,
                            Consumer<GeolocationPositionError> errorCallback) {
         ensureExecutionAvailable();
         ensureDesktopScopeSingleton();
@@ -32,7 +32,7 @@ public class GeolocationHelper {
         addHelperJavaScript(GEOLOCATION_HELPER_JS_PATH);
     }
 
-    protected void setCallbacks(Consumer<GeoLocationPosition> positionCallback, Consumer<GeolocationPositionError> errorCallback) {
+    protected void setCallbacks(Consumer<GeolocationPosition> positionCallback, Consumer<GeolocationPositionError> errorCallback) {
         this.positionCallback =  Objects.requireNonNull(positionCallback, "positionCallback cannot be null");
         this.errorCallback = Objects.requireNonNull(errorCallback, "errorCallback cannot be null");
     }

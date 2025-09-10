@@ -3,10 +3,10 @@ package org.zkoss.zkforge.geolocation;
 /**
  * a java representation of GeolocationPosition, https://developer.mozilla.org/en-US/docs/Web/API/GeolocationPosition
  */
-public class GeoLocationPosition implements GeolocationPositionResult {
+public class GeolocationPosition implements GeolocationPositionResult {
 
     protected long timestamp;
-    protected GeoLocationCoordinates coords;
+    protected GeolocationCoordinates coords;
 
     public long getTimestamp() {
         return timestamp;
@@ -16,16 +16,16 @@ public class GeoLocationPosition implements GeolocationPositionResult {
         this.timestamp = timestamp;
     }
 
-    public GeoLocationCoordinates getCoords() {
+    public GeolocationCoordinates getCoords() {
         return coords;
     }
 
-    public void setCoords(GeoLocationCoordinates coords) {
+    public void setCoords(GeolocationCoordinates coords) {
         this.coords = coords;
     }
 
     @Override
-    public GeoLocationPosition getPosition() {
+    public GeolocationPosition getPosition() {
         return this;
     }
 

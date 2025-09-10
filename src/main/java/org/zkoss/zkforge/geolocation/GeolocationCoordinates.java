@@ -4,7 +4,7 @@ package org.zkoss.zkforge.geolocation;
  * a java representation of GeolocationCoordinates, https://developer.mozilla.org/en-US/docs/Web/API/GeolocationCoordinates
  * make all fields protected to allow extension for js api evolution.
  */
-public class GeoLocationCoordinates {
+public class GeolocationCoordinates {
     protected double latitude;
     protected double longitude;
     protected double altitude;

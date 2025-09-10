@@ -5,7 +5,7 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zkforge.geolocation.GeoLocationPosition;
+import org.zkoss.zkforge.geolocation.GeolocationPosition;
 import org.zkoss.zkforge.geolocation.GeolocationHelper;
 import org.zkoss.zkforge.geolocation.GeolocationPositionError;
 import org.zkoss.zul.Label;
@@ -27,7 +27,7 @@ public class LocationComposer extends SelectorComposer {
         geoLocationHelper.getCurrentPosition();
     }
 
-    private void handleLocationSuccess(GeoLocationPosition position) {
+    private void handleLocationSuccess(GeolocationPosition position) {
         locationLabel.setValue(position.toString());
     }
     
