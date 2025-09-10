@@ -2,6 +2,7 @@
     get geo location example
     <div id="root" apply="test.geolocation.LocationComposer">
         <button id="getLocation" label="Get Location" />
+        <button id="dispose" label="dispose" />
         <label id="locationLabel" value="Location will be displayed here" />
     </div>
 </zk>

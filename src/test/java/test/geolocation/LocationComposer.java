@@ -40,4 +40,8 @@ public class LocationComposer extends SelectorComposer {
     public void getLocation(){
         geoLocationHelper.getCurrentPosition();
     }
+    @Listen("onClick = #dispose")
+    public void dispose(){
+        geoLocationHelper.dispose();
+    }
 }
