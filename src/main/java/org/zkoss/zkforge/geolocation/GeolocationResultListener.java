@@ -14,9 +14,19 @@ public class GeolocationResultListener implements EventListener<Event> {
     protected static final Gson GSON = new Gson();
     protected Consumer<GeoLocationPosition> positionCallback;
     protected Consumer<GeolocationPositionError> errorCallback;
-    
+    protected Event handledEvent;
+
+    /**
+     * This event doesn't have any target component, as it is desktop-level. So ZK will invoke it multiple times if there are multiple root components.
+     * @see org.zkoss.zk.ui.impl.UiEngineImpl UiEngineImpl#process()
+     */
     @Override
     public void onEvent(Event event) {
+        // follow HistoryPopStateEvent to avoid handling the same event for multiple times see org.zkoss.bind.BindComposer
+        if (event == handledEvent){
+            return;
+        }
+        handledEvent = event;
         JSONObject data = (JSONObject)event.getData();
         if (isSuccess(data)){
             GeoLocationPosition geoLocationPosition = parsePosition(data);
@@ -39,14 +49,10 @@ public class GeolocationResultListener implements EventListener<Event> {
     protected static GeolocationPositionError parseError(JSONObject data) {
         return GSON.fromJson(data.get("error").toString(), GeolocationPositionError.class);
     }
+
     public void setCallbacks(Consumer<GeoLocationPosition> positionCallback,
                            Consumer<GeolocationPositionError> errorCallback) {
         this.positionCallback = positionCallback;
         this.errorCallback = errorCallback;
-    }
-    
-    public void clearCallbacks() {
-        this.positionCallback = null;
-        this.errorCallback = null;
     }
 }

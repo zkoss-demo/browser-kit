@@ -27,6 +27,6 @@ window.GeolocationHelper = {
         );
     },
     fireEvent: function(data) {
-        zAu.send(new zk.Event(zk.Desktop._dt, 'onGetLocation', data));
+        zAu.send(new zk.Event(null, 'onGetLocation', data));
     },
 };
