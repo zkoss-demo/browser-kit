@@ -6,12 +6,9 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="foo" level="debug" additivity="false">
-            <AppenderRef ref="Console"/>
-        </Logger>
-        <Logger name="org.zkoss.zk" level="debug" additivity="false">
-            <AppenderRef ref="Console"/>
-        </Logger>
+<!--        <Logger name="org.zkoss.zk" level="debug" additivity="false">-->
+<!--            <AppenderRef ref="Console"/>-->
+<!--        </Logger>-->
         <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>
