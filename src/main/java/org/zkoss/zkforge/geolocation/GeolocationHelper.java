@@ -3,72 +3,79 @@ package org.zkoss.zkforge.geolocation;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.*;
-
-import java.util.Objects;
-import java.util.function.Consumer;
+import java.util.Optional;
 
 /**
- * GeolocationHelper with singleton desktop-level result handling pattern.
- * Only one helper of this type is allowed per page.
+ * A helper class to facilitate using the Geolocation API in ZK applications.
+ * Only one helper of this type is allowed per desktop.
  * Based on https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API/Using_the_Geolocation_API
+ * This is a prototype addon, we keep most fields and methods protected to allow extension for future evolution.
  */
 public class GeolocationHelper {
     protected static final String GEOLOCATION_HELPER_KEY = "browserkit.geolocationhelper";
     protected static String GEOLOCATION_HELPER_JS_PATH = "~./js/GeolocationHelper.js";
-    public static final String EVENT_NAME = "onGetLocation";
-    protected Script geolocationHelperScript;
-
-    protected Consumer<GeolocationPosition> positionCallback;
-    protected Consumer<GeolocationPositionError> errorCallback;
-    protected GeolocationResultListener listener;
+    protected Script helperScript;
     protected Desktop desktop;
+    protected GeoLocationAuService auService;
 
-    public GeolocationHelper(Consumer<GeolocationPosition> positionCallback,
-                           Consumer<GeolocationPositionError> errorCallback) {
+    /**
+     * Get the singleton instance of GeolocationHelper for the current desktop.
+     * If not existing, a new instance will be created and initialized.
+     * This method can only be called when an Execution is available (e.g., during a request).
+     */
+    public static GeolocationHelper getInstance() {
         ensureExecutionAvailable();
+        Desktop desktop = Executions.getCurrent().getDesktop();
+        return Optional.ofNullable((GeolocationHelper) desktop.getAttribute(GEOLOCATION_HELPER_KEY))
+                .orElseGet(GeolocationHelper::new);
+    }
+
+    private GeolocationHelper() {
         ensureDesktopScopeSingleton();
-        setCallbacks(positionCallback, errorCallback);
-        addPageListener();
+        addAuService();
         addHelperJavaScript(GEOLOCATION_HELPER_JS_PATH);
     }
 
-    protected void setCallbacks(Consumer<GeolocationPosition> positionCallback, Consumer<GeolocationPositionError> errorCallback) {
-        this.positionCallback =  Objects.requireNonNull(positionCallback, "positionCallback cannot be null");
-        this.errorCallback = Objects.requireNonNull(errorCallback, "errorCallback cannot be null");
-    }
 
     protected void ensureDesktopScopeSingleton() {
         desktop = Executions.getCurrent().getDesktop();
-        // Enforce singleton constraint
-        if (desktop.getAttribute(GEOLOCATION_HELPER_KEY) != null) {
-            throw new IllegalStateException(
-                "Only one GeolocationHelper allowed per page. " +
-                "Existing instance found.");
-        }
         desktop.setAttribute(GEOLOCATION_HELPER_KEY, this);
     }
 
     protected void addHelperJavaScript(String jsPath) {
-        geolocationHelperScript = new Script();
-        geolocationHelperScript.setSrc(jsPath);
-        geolocationHelperScript.setPage(desktop.getFirstPage());
+        helperScript = new Script();
+        helperScript.setSrc(jsPath);
+        helperScript.setPage(desktop.getFirstPage());
     }
 
     protected void removeHelperJavaScript() {
-        geolocationHelperScript.detach();
+        helperScript.detach();
     }
 
-    protected void addPageListener() {
-        listener = new GeolocationResultListener();
-        listener.setCallbacks(positionCallback, errorCallback);
-        desktop.getFirstPage().addEventListener(EVENT_NAME, listener);
+    protected void addAuService() {
+        auService = new GeoLocationAuService();
+        desktop.addListener(auService);
     }
 
-    protected void removePageListener() {
-        desktop.getFirstPage().removeEventListener(EVENT_NAME, listener);
-    }
-
+    /**
+     * Request the current position from the browser.
+     * The result will be sent back asynchronously via a GeolocationEvent.
+     * Make sure to register an event listener for GeolocationEvent to handle the result.
+     * It will send events to all root components, so you can listen to it from any component in the page.
+     * <code>
+     *     @Listen(GeolocationEvent.EVENT_NAME + "= #root")
+     *     public void handle(GeolocationEvent event){
+     *         if (event.isSuccess()){
+     *             handleLocationSuccess(event.getGeoLocationPosition());
+     *         }else{
+     *             handleLocationError(event.getGeoLocationPositionError());
+     *         }
+     *     }
+     * </code>
+     * Since it doesn't unload the helper JavaScript, it doesn't getCurrentPosition() after being disposed to avoid errors.
+     */
     public void getCurrentPosition() {
+        if (auService == null)  return; // disposed
         Clients.evalJavaScript("GeolocationHelper.getCurrentPosition()");
     }
 
@@ -78,8 +85,13 @@ public class GeolocationHelper {
      */
     public void dispose() {
         desktop.removeAttribute(GEOLOCATION_HELPER_KEY);
-        removePageListener();
+        removeAuService();
         removeHelperJavaScript();
+    }
+
+    protected void removeAuService() {
+        desktop.removeListener(auService);
+        auService = null;
     }
 
     protected static void ensureExecutionAvailable() {

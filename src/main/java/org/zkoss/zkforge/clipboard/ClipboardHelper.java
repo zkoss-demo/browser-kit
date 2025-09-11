@@ -119,4 +119,12 @@ public class ClipboardHelper {
             throw new IllegalStateException("This method can only be called when an Execution is available");
         }
     }
+
+    /**
+     * returns the ClipboardHelper associated with the current desktop, or null if none.
+     * @return
+     */
+    static public ClipboardHelper getInstance() {
+        return (ClipboardHelper) Executions.getCurrent().getDesktop().getAttribute(CLIPBOARD_HELPER_KEY);
+    }
 }

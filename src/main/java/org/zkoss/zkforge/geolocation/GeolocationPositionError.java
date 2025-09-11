@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * https://developer.mozilla.org/en-US/docs/Web/API/GeolocationPositionError
  */
-public class GeolocationPositionError implements GeolocationPositionResult {
+public class GeolocationPositionError {
     protected final int code; // Error code
     protected final String message; // Human-readable error message
 
@@ -34,13 +34,4 @@ public class GeolocationPositionError implements GeolocationPositionResult {
         return codeDescriptions.get(code);
     }
 
-    @Override
-    public GeolocationPosition getPosition() {
-        throw new RuntimeException("not an " + GeolocationPosition.class);
-    }
-
-    @Override
-    public GeolocationPositionError getError() {
-        return this;
-    }
 }
