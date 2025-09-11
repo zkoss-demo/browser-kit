@@ -22,6 +22,7 @@ public class GeolocationHelper {
      * Get the singleton instance of GeolocationHelper for the current desktop.
      * If not existing, a new instance will be created and initialized.
      * This method can only be called when an Execution is available (e.g., during a request).
+     * @return the GeolocationHelper instance for the current desktop
      */
     public static GeolocationHelper getInstance() {
         ensureExecutionAvailable();
@@ -62,8 +63,8 @@ public class GeolocationHelper {
      * The result will be sent back asynchronously via a GeolocationEvent.
      * Make sure to register an event listener for GeolocationEvent to handle the result.
      * It will send events to all root components, so you can listen to it from any component in the page.
-     * <code>
-     *     @Listen(GeolocationEvent.EVENT_NAME + "= #root")
+     * <pre>
+     *     &#64;Listen(GeolocationEvent.EVENT_NAME + "= #root")
      *     public void handle(GeolocationEvent event){
      *         if (event.isSuccess()){
      *             handleLocationSuccess(event.getGeoLocationPosition());
@@ -71,7 +72,7 @@ public class GeolocationHelper {
      *             handleLocationError(event.getGeoLocationPositionError());
      *         }
      *     }
-     * </code>
+     * </pre>
      * Since it doesn't unload the helper JavaScript, it doesn't getCurrentPosition() after being disposed to avoid errors.
      */
     public void getCurrentPosition() {

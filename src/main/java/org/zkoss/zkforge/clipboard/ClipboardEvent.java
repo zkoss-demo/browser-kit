@@ -27,6 +27,8 @@ public class ClipboardEvent extends Event {
 
     /**
      * Parses the AU request data from JavaScript clipboard operations into a ClipboardResult object.
+     * @param data The AU request data map
+     * @return ClipboardResult containing the parsed data
      */
     protected static ClipboardResult parseResponse(Map<String, Object> data) {
         if (ClipboardAction.READ_IMAGE.toString().equals(data.get("action"))) {
@@ -38,6 +40,8 @@ public class ClipboardEvent extends Event {
 
     /**
      * Parses the AU request data from JavaScript clipboard image operations into a ClipboardImageResult object.
+     * @param data The AU request data map
+     * @return ClipboardImageResult containing image details
      */
     protected static ClipboardImageResult parseImageResponse(Map<String, Object> data) {
         // Use Gson to handle most fields automatically
