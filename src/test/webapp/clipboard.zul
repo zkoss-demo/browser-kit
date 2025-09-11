@@ -16,9 +16,8 @@
     
     <separator height="30px"/>
     
-    <!-- Use Case 2: Form Auto-Fill from Clipboard -->
     <nodom apply="test.clipboard.FormAutoFillComposer">
-        <h:h2>Use Case 2: Form Auto-Fill from Clipboard</h:h2>
+        <h:h2>Use Case: Form Auto-Fill from Clipboard</h:h2>
         <h:p>Copy each item below, click the paste from clipboard button</h:p>
         <h:ul>
             <h:li>john@yourcompany.com</h:li>
@@ -56,9 +55,8 @@
     
     <separator height="30px"/>
     
-    <!-- Use Case 3: Developer Tools & Debug Information -->
     <nodom apply="test.clipboard.DebugInfoComposer">
-        <h:h2>Use Case 3: Developer Tools &amp; Debug Information</h:h2>
+        <h:h2>Use Case: Transfer Debug Information</h:h2>
         <h:p>Generate and copy system debug information for troubleshooting purposes.</h:p>
         <vlayout>
             <hlayout spacing="10px">
