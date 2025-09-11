@@ -180,6 +180,6 @@ class ClipboardHelper {
      * @private
      */
     static fireEventToServer(data) {
-        zAu.send(new zk.Event(null, ClipboardHelper.CLIPBOARD_ACTION_EVENT, data));
+        zAu.send(new zk.Event(zk.Desktop._dt, ClipboardHelper.CLIPBOARD_ACTION_EVENT, data));
     }
 }

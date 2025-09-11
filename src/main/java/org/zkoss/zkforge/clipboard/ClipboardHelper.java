@@ -3,8 +3,7 @@ package org.zkoss.zkforge.clipboard;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.*;
-
-import java.util.function.Consumer;
+import java.util.Optional;
 
 /**
  * Helper class that provides Java access to the browser's Clipboard API.
@@ -21,11 +20,14 @@ import java.util.function.Consumer;
  * 
  * <p>Example usage:</p>
  * <pre>{@code
- * // Reading from clipboard
- * String text = ClipboardHelper.readText();
+ * // Get the singleton instance
+ * ClipboardHelper helper = ClipboardHelper.getInstance();
+ * 
+ * // Reading from clipboard (results delivered via desktop events)
+ * helper.readText();
  * 
  * // Writing to clipboard
- * ClipboardHelper.writeText("Hello World");
+ * helper.writeText("Hello World");
  * }</pre>
  *
  * ClipboardHelper with singleton desktop-level result handling pattern.
@@ -35,39 +37,25 @@ import java.util.function.Consumer;
 public class ClipboardHelper {
     protected static final String CLIPBOARD_HELPER_KEY = "browserkit.clipboardhelper";
     protected static String CLIPBOARD_HELPER_JS_PATH = "~./js/ClipboardHelper.js";
-    public static final String EVENT_NAME = "onClipboardAction";
     protected Script clipboardHelperScript;
-
-    protected Consumer<ClipboardResult> textCallback = r -> {};
-    protected Consumer<ClipboardImageResult> imageCallback = r -> {};
-    protected ClipboardActionListener listener;
     protected Desktop desktop;
+    private ClipboardAuService auService;
 
-    public ClipboardHelper(Consumer<ClipboardResult> textCallback) {
-        this(textCallback, null);
-    }
-
-    public ClipboardHelper(Consumer<ClipboardResult> textCallback, Consumer<ClipboardImageResult> imageCallback) {
+    public static ClipboardHelper getInstance() {
         ensureExecutionAvailable();
-        ensureDesktopScopeSingleton();
-        setCallbacks(textCallback, imageCallback);
-        addPageListener();
-        addHelperJavaScript(CLIPBOARD_HELPER_JS_PATH);
+        Desktop desktop = Executions.getCurrent().getDesktop();
+        return Optional.ofNullable((ClipboardHelper) desktop.getAttribute(CLIPBOARD_HELPER_KEY))
+                .orElseGet(ClipboardHelper::new);
     }
 
-    protected void setCallbacks(Consumer<ClipboardResult> textCallback, Consumer<ClipboardImageResult> imageCallback) {
-        this.textCallback = textCallback != null ? textCallback : (r -> {});
-        this.imageCallback = imageCallback != null ? imageCallback : (r -> {});
+    private ClipboardHelper() {
+        ensureDesktopScopeSingleton();
+        addAuService();
+        addHelperJavaScript(CLIPBOARD_HELPER_JS_PATH);
     }
 
     protected void ensureDesktopScopeSingleton() {
         desktop = Executions.getCurrent().getDesktop();
-        // Enforce singleton constraint
-        if (desktop.getAttribute(CLIPBOARD_HELPER_KEY) != null) {
-            throw new IllegalStateException(
-                "Only one ClipboardHelper allowed per page. " +
-                "Existing instance found.");
-        }
         desktop.setAttribute(CLIPBOARD_HELPER_KEY, this);
     }
 
@@ -78,39 +66,51 @@ public class ClipboardHelper {
     }
 
     protected void removeHelperJavaScript() {
-        clipboardHelperScript.detach();
+        if (clipboardHelperScript != null) {
+            clipboardHelperScript.detach();
+            clipboardHelperScript = null;
+        }
     }
 
-    protected void addPageListener() {
-        listener = new ClipboardActionListener();
-        listener.setCallbacks(textCallback, imageCallback);
-        desktop.getFirstPage().addEventListener(EVENT_NAME, listener);
+    protected void addAuService() {
+        auService = new ClipboardAuService();
+        desktop.addListener(auService);
     }
 
-    protected void removePageListener() {
-        desktop.getFirstPage().removeEventListener(EVENT_NAME, listener);
+    private void removeAuService() {
+        if (auService != null) {
+            desktop.removeListener(auService);
+            auService = null;
+        }
     }
 
     public void writeText(String text) {
-        Clients.evalJavaScript("ClipboardHelper.writeText('" + text + "')");
+        if (auService == null) return; // disposed
+        if (text == null) {
+            throw new IllegalArgumentException("Text cannot be null");
+        }
+        // Escape single quotes to prevent JavaScript syntax errors
+        String escapedText = text.replace("'", "\\'").replace("\n", "\\n").replace("\r", "\\r");
+        Clients.evalJavaScript("ClipboardHelper.writeText('" + escapedText + "')");
     }
 
     public void readText() {
+        if (auService == null) return; // disposed
         Clients.evalJavaScript("ClipboardHelper.readText()");
     }
 
     public void readImage() {
-        // imageCallback is always non-null now
+        if (auService == null) return; // disposed
         Clients.evalJavaScript("ClipboardHelper.readImage()");
     }
 
     /**
-     * Dispose this helper, removing the page listener and the helper JavaScript.
+     * Dispose this helper, removing the AU service and the helper JavaScript.
      * After calling this method, this instance should not be used anymore.
      */
     public void dispose() {
         desktop.removeAttribute(CLIPBOARD_HELPER_KEY);
-        removePageListener();
+        removeAuService();
         removeHelperJavaScript();
     }
 
@@ -118,13 +118,5 @@ public class ClipboardHelper {
         if (Executions.getCurrent() == null) {
             throw new IllegalStateException("This method can only be called when an Execution is available");
         }
-    }
-
-    /**
-     * returns the ClipboardHelper associated with the current desktop, or null if none.
-     * @return
-     */
-    static public ClipboardHelper getInstance() {
-        return (ClipboardHelper) Executions.getCurrent().getDesktop().getAttribute(CLIPBOARD_HELPER_KEY);
     }
 }
