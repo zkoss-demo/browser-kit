@@ -29,9 +29,24 @@ This is a ZK addon (browser-kit) that provides Java wrappers for browser JavaScr
 - **JavaScript Integration**: Each helper has corresponding .js file in `src/main/resources/web/js/`
 
 ### Key Architecture Patterns
-- **Event-Driven**: Uses ZK event system with anchor components to handle async JavaScript callbacks
-- **Consumer Pattern**: Helpers accept `Consumer<ResultType>` callbacks for handling results
-- **Resource Management**: JavaScript helpers are loaded dynamically via ZK's Script component
+- **AuService-Based Event Handling**: Uses ZK's native AuService for desktop-level, decoupled event communication
+- **Event-Driven**: Implements event system with desktop-level event listeners
+- **Singleton Pattern**: Ensures single instance per desktop with lazy initialization
+- **Consumer Pattern**: Supports callback-based and event-based result handling
+- **Resource Management**: 
+  - JavaScript helpers loaded dynamically via ZK's Script component
+  - Clean desktop-level resource registration and disposal
+
+### Event Communication Flow
+```
+Browser API → JavaScript Helper → zAu.send(desktop event) → AuService → Desktop Event → Component Listeners
+```
+
+### Key Benefits
+- Improved scalability of event handling
+- Decoupled communication between browser and server
+- More robust resource management
+- Simplified event registration and propagation
 
 ### Dependencies
 - **ZK Framework**: 9.6.0 (scope: provided - assumes host application provides ZK)
