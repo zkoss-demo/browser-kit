@@ -13,4 +13,64 @@
         <textbox placeholder="press ctrl+v here" multiline="true" rows="5"/>
         </vlayout>
     </nodom>
+    
+    <separator height="30px"/>
+    
+    <!-- Use Case 2: Form Auto-Fill from Clipboard -->
+    <nodom apply="test.clipboard.FormAutoFillComposer">
+        <h:h2>Use Case 2: Form Auto-Fill from Clipboard</h:h2>
+        <h:p>Copy each item below, click the paste from clipboard button</h:p>
+        <h:ul>
+            <h:li>john@yourcompany.com</h:li>
+            <h:li>+1-800-555-1234</h:li>
+            <h:li>Some additional notes here.</h:li>
+        </h:ul>
+        <vlayout>
+            <hlayout spacing="10px">
+                <button label="Paste from Clipboard" id="pasteButton" style="background-color: #4CAF50; color: white;"/>
+                <label id="statusLabel" style="color: #666; font-style: italic;"/>
+            </hlayout>
+            <separator height="10px"/>
+            <grid>
+                <columns>
+                    <column label="Field" width="120px"/>
+                    <column label="Value"/>
+                </columns>
+                <rows>
+                    <row>
+                        <label value="Email:"/>
+                        <textbox id="emailTextbox" placeholder="Auto-filled if clipboard contains email" width="300px"/>
+                    </row>
+                    <row>
+                        <label value="Phone:"/>
+                        <textbox id="phoneTextbox" placeholder="Auto-filled if clipboard contains numbers" width="300px"/>
+                    </row>
+                    <row>
+                        <label value="Notes:"/>
+                        <textbox id="noteTextbox" placeholder="Other text goes here" multiline="true" rows="3" width="300px"/>
+                    </row>
+                </rows>
+            </grid>
+        </vlayout>
+    </nodom>
+    
+    <separator height="30px"/>
+    
+    <!-- Use Case 3: Developer Tools & Debug Information -->
+    <nodom apply="test.clipboard.DebugInfoComposer">
+        <h:h2>Use Case 3: Developer Tools &amp; Debug Information</h:h2>
+        <h:p>Generate and copy system debug information for troubleshooting purposes.</h:p>
+        <vlayout>
+            <hlayout spacing="10px">
+                <button label="Copy Debug Info" id="copyDebugInfo" style="background-color: #2196F3; color: white;"/>
+                <label id="debugStatusLabel" style="color: #666; font-style: italic;"/>
+            </hlayout>
+            <separator height="10px"/>
+            <h:div style="background-color: #f5f5f5; padding: 10px; border-radius: 4px;">
+                <h:h4 style="margin: 0 0 10px 0; color: #333;">Paste Debug Information Here:</h:h4>
+                <textbox  multiline="true" rows="8" width="100%"
+                         style="font-family: monospace; font-size: 12px; background-color: white;"/>
+            </h:div>
+        </vlayout>
+    </nodom>
 </zk>

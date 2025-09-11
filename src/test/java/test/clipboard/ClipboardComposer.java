@@ -5,9 +5,11 @@ import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.*;
 import org.zkoss.zkforge.clipboard.*;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
 
 /**
- * demonstrates how to use the ClipboardHelper.
+ * Demonstrates how to use the ClipboardHelper with AuService architecture.
  */
 public class ClipboardComposer extends SelectorComposer<Component> {
     @Wire
@@ -17,11 +19,16 @@ public class ClipboardComposer extends SelectorComposer<Component> {
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
-        clipboardHelper = new ClipboardHelper(this::processData);
+        clipboardHelper = ClipboardHelper.getInstance();
+        
+        // Listen for clipboard events on this composer's root component
+        comp.addEventListener(ClipboardEvent.EVENT_NAME, (EventListener<Event>) this::handleClipboardEvent);
     }
 
-    public void processData(ClipboardResult result){
-        if (result.isSuccess()){
+    public void handleClipboardEvent(Event event) {
+        ClipboardEvent clipboardEvent = (ClipboardEvent) event;
+        ClipboardResult result = clipboardEvent.getClipboardResult();
+        if (result.isSuccess()) {
             if (result.getAction() == ClipboardAction.READ) {
                 pastingTarget.setValue(result.getText());
             }
@@ -30,13 +37,13 @@ public class ClipboardComposer extends SelectorComposer<Component> {
         }
     }
 
-    @Listen("onClick = #read ")
-    public void read(){
+    @Listen("onClick = #read")
+    public void read() {
         clipboardHelper.readText();
     }
 
-    @Listen("onClick = #write ")
-    public void write(){
+    @Listen("onClick = #write")
+    public void write() {
         clipboardHelper.writeText("content from server");
     }
 }

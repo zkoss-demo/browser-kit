@@ -1,5 +1,5 @@
 <zk xmlns:h="native">
-    <nodom apply="test.clipboard.ClipboardImageComposer">
+    <nodom id="root" apply="test.clipboard.ClipboardImageComposer">
         <h:h1>Clipboard Image Reader Demo</h:h1>
         
         <h:h2>📋 Read Image from Clipboard</h:h2>

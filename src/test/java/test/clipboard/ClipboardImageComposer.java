@@ -4,8 +4,7 @@ import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.*;
-import org.zkoss.zkforge.clipboard.ClipboardHelper;
-import org.zkoss.zkforge.clipboard.ClipboardImageResult;
+import org.zkoss.zkforge.clipboard.*;
 import org.zkoss.zul.*;
 
 /**
@@ -27,7 +26,7 @@ public class ClipboardImageComposer extends SelectorComposer<Component> {
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
-        clipboardHelper = new ClipboardHelper(null, this::handleImageResult);
+        clipboardHelper = ClipboardHelper.getInstance();
     }
 
     /**
@@ -44,7 +43,9 @@ public class ClipboardImageComposer extends SelectorComposer<Component> {
     /**
      * Processes image data from the image-only clipboard helper
      */
-    public void handleImageResult(ClipboardImageResult result) {
+    @Listen(ClipboardEvent.EVENT_NAME + " = #root")
+    public void handleImageResult(ClipboardEvent event) {
+        ClipboardImageResult result = event.getClipboardImageResult();
         if (result.isSuccess() && result.hasImageData()) {
             displayImageResult(result);
             showStatus("✅ Image successfully read from clipboard!", "success");
