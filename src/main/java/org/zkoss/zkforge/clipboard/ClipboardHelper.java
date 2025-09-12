@@ -1,14 +1,14 @@
 package org.zkoss.zkforge.clipboard;
 
 import org.zkoss.zk.ui.*;
+import org.zkoss.zk.ui.select.Selectors;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.*;
-import java.util.Optional;
 
 /**
- * Helper class that provides Java access to the browser's Clipboard API.
+ * Static helper class that provides Java access to the browser's Clipboard API.
  * 
- * <p>This class wraps the native browser Clipboard API and provides methods to read from and write to
+ * <p>This class wraps the native browser Clipboard API and provides static methods to read from and write to
  * the system clipboard. All operations are asynchronous and require user interaction due to browser
  * security restrictions.</p>
  * 
@@ -20,98 +20,111 @@ import java.util.Optional;
  * 
  * <p>Example usage:</p>
  * <pre>{@code
- * // Get the singleton instance
- * ClipboardHelper helper = ClipboardHelper.getInstance();
- * 
  * // Reading from clipboard (results delivered via desktop events)
- * helper.readText();
+ * ClipboardHelper.readText();
  * 
  * // Writing to clipboard
- * helper.writeText("Hello World");
+ * ClipboardHelper.writeText("Hello World");
  * }</pre>
  *
- * ClipboardHelper with singleton desktop-level result handling pattern.
- * Only one helper of this type is allowed per page.
- * Based on https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API
+ * <p>Results are delivered asynchronously via {@link ClipboardEvent} posted to the desktop.
+ * Components can listen for these events to handle clipboard results.</p>
+ * 
+ * <p>Based on <a href="https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API">MDN Clipboard API</a></p>
  */
 public class ClipboardHelper {
     protected static final String CLIPBOARD_HELPER_KEY = "browserkit.clipboardhelper";
-    protected static String CLIPBOARD_HELPER_JS_PATH = "~./js/ClipboardHelper.js";
-    protected Script clipboardHelperScript;
-    protected Desktop desktop;
-    private ClipboardAuService auService;
+    protected static final String CLIPBOARD_HELPER_JS_PATH = "~./js/ClipboardHelper.js";
+    protected static ClipboardAuService auService;
 
-    public static ClipboardHelper getInstance() {
-        ensureExecutionAvailable();
-        Desktop desktop = Executions.getCurrent().getDesktop();
-        return Optional.ofNullable((ClipboardHelper) desktop.getAttribute(CLIPBOARD_HELPER_KEY))
-                .orElseGet(ClipboardHelper::new);
-    }
-
-    private ClipboardHelper() {
-        ensureDesktopScopeSingleton();
-        addAuService();
-        addHelperJavaScript(CLIPBOARD_HELPER_JS_PATH);
-    }
-
-    protected void ensureDesktopScopeSingleton() {
-        desktop = Executions.getCurrent().getDesktop();
-        desktop.setAttribute(CLIPBOARD_HELPER_KEY, this);
-    }
-
-    protected void addHelperJavaScript(String jsPath) {
-        clipboardHelperScript = new Script();
-        clipboardHelperScript.setSrc(jsPath);
-        clipboardHelperScript.setPage(desktop.getFirstPage());
-    }
-
-    protected void removeHelperJavaScript() {
-        if (clipboardHelperScript != null) {
-            clipboardHelperScript.detach();
-            clipboardHelperScript = null;
-        }
-    }
-
-    protected void addAuService() {
-        auService = new ClipboardAuService();
-        desktop.addListener(auService);
-    }
-
-    private void removeAuService() {
-        if (auService != null) {
-            desktop.removeListener(auService);
-            auService = null;
-        }
-    }
-
-    public void writeText(String text) {
-        if (auService == null) return; // disposed
-        if (text == null) {
-            throw new IllegalArgumentException("Text cannot be null");
-        }
+    /**
+     * Write text to the system clipboard.
+     * 
+     * @param text the text to write to the clipboard
+     * @throws IllegalArgumentException if text is null
+     * @throws IllegalStateException if called outside an execution context
+     */
+    public static void writeText(String text) {
+        if (text == null)  return;
         // Escape single quotes to prevent JavaScript syntax errors
         String escapedText = text.replace("'", "\\'").replace("\n", "\\n").replace("\r", "\\r");
         Clients.evalJavaScript("ClipboardHelper.writeText('" + escapedText + "')");
     }
 
-    public void readText() {
-        if (auService == null) return; // disposed
+    /**
+     * Read text from the system clipboard.
+     * Results are delivered asynchronously via {@link ClipboardEvent}.
+     * 
+     * @throws IllegalStateException if called outside an execution context
+     */
+    public static void readText() {
         Clients.evalJavaScript("ClipboardHelper.readText()");
     }
 
-    public void readImage() {
-        if (auService == null) return; // disposed
+    /**
+     * Read image from the system clipboard.
+     * Results are delivered asynchronously via {@link ClipboardEvent}.
+     * 
+     * @throws IllegalStateException if called outside an execution context
+     */
+    public static void readImage() {
+        init();
         Clients.evalJavaScript("ClipboardHelper.readImage()");
     }
 
     /**
-     * Dispose this helper, removing the AU service and the helper JavaScript.
-     * After calling this method, this instance should not be used anymore.
+     * Initialize clipboard helper for the current desktop if not already initialized.
+     * This method ensures the AU service and JavaScript are properly set up.
      */
-    public void dispose() {
+    public static void init() {
+        ensureExecutionAvailable();
+        Desktop desktop = Executions.getCurrent().getDesktop();
+        // Check if already initialized for this desktop
+        if (desktop.getAttribute(CLIPBOARD_HELPER_KEY) != null) {
+            return;
+        }
+        // Mark as initialized
+        desktop.setAttribute(CLIPBOARD_HELPER_KEY, true);
+
+        addAuService();
+        addHelperScript();
+    }
+
+    private static void addAuService() {
+        Desktop desktop = Executions.getCurrent().getDesktop();
+        if (auService == null) {
+            auService = new ClipboardAuService();
+        }
+        desktop.addListener(auService);
+    }
+
+    protected static void addHelperScript() {
+        Desktop desktop = Executions.getCurrent().getDesktop();
+        Script clipboardHelperScript = new Script();
+        clipboardHelperScript.setId(CLIPBOARD_HELPER_KEY);
+        clipboardHelperScript.setSrc(CLIPBOARD_HELPER_JS_PATH);
+        clipboardHelperScript.setPage(desktop.getFirstPage());
+    }
+
+    /**
+     * Dispose clipboard helper for the current desktop.
+     * Removes the AU service listener and JavaScript helper for this desktop.
+     * 
+     * @throws IllegalStateException if called outside an execution context
+     */
+    public static void dispose() {
+        ensureExecutionAvailable();
+        Desktop desktop = Executions.getCurrent().getDesktop();
+        
+        // Mark as not initialized
         desktop.removeAttribute(CLIPBOARD_HELPER_KEY);
-        removeAuService();
-        removeHelperJavaScript();
+        
+        if (auService != null) {
+            desktop.removeListener(auService);
+        }
+        
+        Selectors.find(desktop.getFirstPage(), "#" + CLIPBOARD_HELPER_KEY)
+                .forEach(Component::detach);
     }
 
     protected static void ensureExecutionAvailable() {
