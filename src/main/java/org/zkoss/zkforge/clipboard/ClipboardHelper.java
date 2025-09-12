@@ -72,6 +72,8 @@ public class ClipboardHelper {
     /**
      * Initialize clipboard helper for the current desktop if not already initialized.
      * This method ensures the AU service and JavaScript are properly set up.
+     * You should call this method before you call any action like {@link #writeText(String)} or {@link #readText()}.
+     * You should call this method in a Composer's life cycle method e.g. {@link org.zkoss.zk.ui.util.Composer#doAfterCompose(Component)}.
      */
     public static void init() {
         ensureExecutionAvailable();

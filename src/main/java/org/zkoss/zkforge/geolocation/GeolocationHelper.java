@@ -17,10 +17,10 @@ import java.util.Optional;
  * restricted in certain browsers or contexts (e.g., non-HTTPS).</p>
  * 
  * <p>Example usage:</p>
- * <pre>{@code
+ * <pre>
  * // Request current position (results delivered via desktop events)
  * GeolocationHelper.getCurrentPosition();
- * }</pre>
+ * </pre>
  *
  * <p>Results are delivered asynchronously via {@link GeolocationEvent} posted to the desktop.
  * Components can listen for these events to handle geolocation results.</p>
@@ -37,8 +37,8 @@ public class GeolocationHelper {
      * Results are delivered asynchronously via {@link GeolocationEvent}.
      * 
      * <p>Components can listen for geolocation events:</p>
-     * <pre>{@code
-     * @Listen(GeolocationEvent.EVENT_NAME + " = #root")
+     * <pre>
+     * &#64;Listen(GeolocationEvent.EVENT_NAME + " = #root")
      * public void handleGeolocation(GeolocationEvent event) {
      *     if (event.isSuccess()) {
      *         GeoLocationPosition position = event.getGeoLocationPosition();
@@ -48,7 +48,7 @@ public class GeolocationHelper {
      *         // Handle error
      *     }
      * }
-     * }</pre>
+     * </pre>
      * 
      * @throws IllegalStateException if called outside an execution context
      */
@@ -60,6 +60,8 @@ public class GeolocationHelper {
     /**
      * Initialize geolocation helper for the current desktop if not already initialized.
      * This method ensures the AU service and JavaScript are properly set up.
+     * You should call this method before you call {@link #getCurrentPosition()}.
+     * You should call this method in a Composer's life cycle method e.g. {@link org.zkoss.zk.ui.util.Composer#doAfterCompose(Component)}.
      */
     public static void init() {
         ensureExecutionAvailable();
