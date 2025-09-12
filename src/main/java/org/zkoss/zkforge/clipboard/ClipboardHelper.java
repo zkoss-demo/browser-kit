@@ -41,8 +41,6 @@ public class ClipboardHelper {
      * Write text to the system clipboard.
      * 
      * @param text the text to write to the clipboard
-     * @throws IllegalArgumentException if text is null
-     * @throws IllegalStateException if called outside an execution context
      */
     public static void writeText(String text) {
         if (text == null)  return;
@@ -68,7 +66,6 @@ public class ClipboardHelper {
      * @throws IllegalStateException if called outside an execution context
      */
     public static void readImage() {
-        init();
         Clients.evalJavaScript("ClipboardHelper.readImage()");
     }
 

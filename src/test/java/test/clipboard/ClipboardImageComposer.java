@@ -21,12 +21,10 @@ public class ClipboardImageComposer extends SelectorComposer<Component> {
     @Wire
     private Image clipboardImage;
 
-    private ClipboardHelper clipboardHelper;
-
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
-        clipboardHelper = ClipboardHelper.getInstance();
+        ClipboardHelper.init();
     }
 
     /**
@@ -36,7 +34,7 @@ public class ClipboardImageComposer extends SelectorComposer<Component> {
     public void readImage() {
         showStatus("📋 Reading image from clipboard...", "info");
         hideImageResult();
-        clipboardHelper.readImage();
+        ClipboardHelper.readImage();
     }
     
 
@@ -45,6 +43,7 @@ public class ClipboardImageComposer extends SelectorComposer<Component> {
      */
     @Listen(ClipboardEvent.EVENT_NAME + " = #root")
     public void handleImageResult(ClipboardEvent event) {
+        if (event.getClipboardResult().getAction() != ClipboardAction.READ_IMAGE) return; // Ignore other actions
         ClipboardImageResult result = event.getClipboardImageResult();
         if (result.isSuccess() && result.hasImageData()) {
             displayImageResult(result);

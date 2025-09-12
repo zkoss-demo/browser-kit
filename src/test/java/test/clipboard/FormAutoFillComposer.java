@@ -1,25 +1,24 @@
 package test.clipboard;
 
-import org.zkoss.zk.ui.Component;
+import org.zkoss.lang.Threads;
+import org.zkoss.zk.ui.*;
+import org.zkoss.zk.ui.event.*;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
-import org.zkoss.zkforge.clipboard.ClipboardEvent;
-import org.zkoss.zkforge.clipboard.ClipboardHelper;
-import org.zkoss.zkforge.clipboard.ClipboardResult;
+import org.zkoss.zkforge.clipboard.*;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
- * Composer for Use Case 2: Form Auto-Fill from Clipboard
+ * Composer for Use Case: Form Auto-Fill from Clipboard
  * Demonstrates smart parsing and auto-filling of form fields based on clipboard content.
  */
 public class FormAutoFillComposer extends SelectorComposer<Component> {
-    
-    @Wire
-    private Button pasteButton;
     
     @Wire
     private Label statusLabel;
@@ -33,18 +32,13 @@ public class FormAutoFillComposer extends SelectorComposer<Component> {
     @Wire
     private Textbox noteTextbox;
     
-    private ClipboardHelper clipboardHelper;
-
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
-        
-        // Get clipboard helper instance
-        clipboardHelper = ClipboardHelper.getInstance();
-        
+        ClipboardHelper.init();
         // Listen for clipboard events on this composer's root component
         comp.addEventListener(ClipboardEvent.EVENT_NAME, this::handleClipboardEvent);
-        
+        comp.getDesktop().enableServerPush(true);
         showStatus("Ready - Copy some text and click 'Paste from Clipboard'", "info");
     }
     
@@ -52,7 +46,7 @@ public class FormAutoFillComposer extends SelectorComposer<Component> {
         if (event instanceof ClipboardEvent) {
             ClipboardEvent clipboardEvent = (ClipboardEvent) event;
             ClipboardResult result = clipboardEvent.getClipboardResult();
-            
+            if (result.getAction() != ClipboardAction.READ) return; // Ignore other actions
             if (result.isSuccess()) {
                 String clipboardText = result.getText();
                 processClipboardContent(clipboardText);
@@ -65,7 +59,7 @@ public class FormAutoFillComposer extends SelectorComposer<Component> {
     @Listen("onClick = #pasteButton")
     public void pasteFromClipboard() {
         showStatus("Reading from clipboard...", "info");
-        clipboardHelper.readText();
+        ClipboardHelper.readText();
     }
     
     /**
@@ -150,13 +144,14 @@ public class FormAutoFillComposer extends SelectorComposer<Component> {
                 statusLabel.setStyle("color: #666; font-style: italic;");
                 break;
         }
-        
-        // Auto-clear status after 3 seconds for success/info messages
-        if ("success".equals(type) || "info".equals(type)) {
-            Clients.evalJavaScript("setTimeout(() => { " +
-                "const label = zk.$('#" + statusLabel.getUuid() + "'); " +
-                "if (label) label.setValue(''); " +
-                "}, 3000);");
-        }
+        CompletableFuture.runAsync(() -> {
+            Threads.sleep(3000);
+            Executions.schedule(getPage().getDesktop(),
+                    new EventListener<Event>() {
+                        public void onEvent(Event event) {
+                            if ("onClearStatus".equals(event.getName()))  statusLabel.setValue("");
+                        }
+                    }, new Event("onClearStatus"));
+        });
     }
 }

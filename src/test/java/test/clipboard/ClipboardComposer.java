@@ -14,13 +14,11 @@ import org.zkoss.zk.ui.event.EventListener;
 public class ClipboardComposer extends SelectorComposer<Component> {
     @Wire
     private Textbox pastingTarget;
-    private ClipboardHelper clipboardHelper;
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
-        clipboardHelper = ClipboardHelper.getInstance();
-        
+        ClipboardHelper.init(); // Initialize the ClipboardHelper
         // Listen for clipboard events on this composer's root component
         comp.addEventListener(ClipboardEvent.EVENT_NAME, (EventListener<Event>) this::handleClipboardEvent);
     }
@@ -39,11 +37,11 @@ public class ClipboardComposer extends SelectorComposer<Component> {
 
     @Listen("onClick = #read")
     public void read() {
-        clipboardHelper.readText();
+        ClipboardHelper.readText();
     }
 
     @Listen("onClick = #write")
     public void write() {
-        clipboardHelper.writeText("content from server");
+        ClipboardHelper.writeText("content from server");
     }
 }

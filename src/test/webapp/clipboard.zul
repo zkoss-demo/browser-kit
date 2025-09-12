@@ -55,12 +55,12 @@
     
     <separator height="30px"/>
     
-    <nodom apply="test.clipboard.DebugInfoComposer">
+    <nodom viewModel="@id('vm')@init('test.clipboard.DebugInfoViewModel')" onClipboardAction="@command('handleClipboardAction')" >
         <h:h2>Use Case: Transfer Debug Information</h:h2>
         <h:p>Generate and copy system debug information for troubleshooting purposes.</h:p>
         <vlayout>
             <hlayout spacing="10px">
-                <button label="Copy Debug Info" id="copyDebugInfo" style="background-color: #2196F3; color: white;"/>
+                <button label="Copy Debug Info" id="copyDebugInfo" onClick="@command('copyDebugInformation')"/>
                 <label id="debugStatusLabel" style="color: #666; font-style: italic;"/>
             </hlayout>
             <separator height="10px"/>
