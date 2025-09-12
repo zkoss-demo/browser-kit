@@ -19,7 +19,7 @@ public class DebugInfoViewModel {
 
     @Command
     public void handleClipboardAction(@ContextParam(ContextType.TRIGGER_EVENT) ClipboardEvent event) {
-        ClipboardResult result = event.getClipboardResult();
+        ClipboardResult result = event.getResult();
         if (result.getAction() != ClipboardAction.WRITE) return; // Ignore other actions
         if (result.isSuccess()) {
             Notification.show("Debug info copied - ready to paste in support ticket", "info", null, "bottom_center", 3000);

@@ -1,4 +1,4 @@
-<zk xmlns:h="native">
+<zk xmlns:h="native" xmlns:ca="client/attribute">
     <nodom id="root" apply="test.clipboard.ClipboardImageComposer">
         <h:h1>Clipboard Image Reader Demo</h:h1>
         
@@ -13,6 +13,7 @@
         <h:div style="margin: 20px 0;">
             <button label="📖 Read Image from Clipboard" id="readImageButton" 
                     style="font-size: 16px; padding: 10px 20px;"/>
+            <button label="📖 Read Image from Clipboard (Safari) " ca:onclick="ClipboardHelper.readImage()"/>
         </h:div>
         
         <!-- Status messages -->

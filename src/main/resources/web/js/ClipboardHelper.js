@@ -14,13 +14,13 @@ class ClipboardHelper {
                 .catch(error => {
                     this.fireEventToServer({
                         action: 'WRITE',
-                        error: 'Failed to write to clipboard: ' + error.message
+                        error: this.extractError(error),
                     });
                 });
         } else {
             this.fireEventToServer({
                 action: 'WRITE',
-                error: 'Clipboard API not supported by this browser.'
+                error: {message:'Clipboard API not supported by this browser.'}
             });
         }
     }
@@ -40,13 +40,13 @@ class ClipboardHelper {
                 .catch(error => {
                     this.fireEventToServer({
                         action: 'READ',
-                        error: error.message
+                        error: this.extractError(error)
                     });
                 });
         } else {
             this.fireEventToServer({
                 action: 'READ',
-                error: 'Clipboard API not supported by this browser.'
+                error: {message: 'Clipboard API not supported by this browser.'}
             });
         }
     }
@@ -60,7 +60,7 @@ class ClipboardHelper {
         if (!navigator.clipboard || !navigator.clipboard.read) {
             this.fireEventToServer({
                 action: 'READ_IMAGE',
-                error: 'Clipboard read() API not supported by this browser. Requires Chrome 88+, Firefox 127+, or Edge 88+.'
+                error: {message: 'Clipboard read() API not supported by this browser. Requires Chrome 88+, Firefox 127+, or Edge 88+.'}
             });
             return;
         }
@@ -83,24 +83,14 @@ class ClipboardHelper {
                 // No image found
                 this.fireEventToServer({
                     action: 'READ_IMAGE',
-                    error: 'No image data found in clipboard'
+                    error: {message:'No image data found in clipboard'}
                 });
             })
             .catch(error => {
-                // Handle various error scenarios
-                let errorMessage = error.message;
-                
-                if (error.name === 'NotAllowedError') {
-                    errorMessage = 'Clipboard access denied. Please ensure the page has focus and try again.';
-                } else if (error.name === 'NotFoundError') {
-                    errorMessage = 'No data found in clipboard.';
-                } else if (error.name === 'DataError') {
-                    errorMessage = 'Clipboard data is corrupted or in an unsupported format.';
-                }
-                
+                console.error(error);
                 this.fireEventToServer({
                     action: 'READ_IMAGE',
-                    error: errorMessage
+                    error: this.extractError(error)
                 });
             });
     }
@@ -150,7 +140,7 @@ class ClipboardHelper {
             .catch(error => {
                 this.fireEventToServer({
                     action: 'READ_IMAGE',
-                    error: 'Failed to process image data: ' + error.message
+                    error: this.extractError(error)
                 });
             });
     }
@@ -181,5 +171,9 @@ class ClipboardHelper {
      */
     static fireEventToServer(data) {
         zAu.send(new zk.Event(zk.Desktop._dt, ClipboardHelper.CLIPBOARD_ACTION_EVENT, data));
+    }
+
+    static extractError(error){
+        return {code: error.code, message: error.message};
     }
 }

@@ -3,88 +3,41 @@ package org.zkoss.zkforge.clipboard;
 import com.google.gson.annotations.Expose;
 
 /**
- * Result object for clipboard operations containing either success data or error information.
+ * Abstract base class for all clipboard operation results.
  * 
  * <p>Success is indicated when {@code getError()} returns {@code null}.
  * Use {@code isSuccess()} for convenient success checking.</p>
  */
-public class ClipboardResult {
+public abstract class ClipboardResult {
     @Expose
     private ClipboardAction action;
     @Expose
-    private String text;
-    @Expose
-    private String error;
+    private ClipboardError error;
 
-    /**
-     * Checks if the clipboard operation was successful.
-     * 
-     * @return true if the operation succeeded (no error), false otherwise
-     */
     public boolean isSuccess() {
         return error == null;
     }
 
     /**
-     * Checks if the clipboard operation failed.
+     * Gets the clipboard error information.
      * 
-     * @return true if the operation failed (has error), false otherwise
+     * @return the ClipboardError object, or null if the operation succeeded
      */
-    public boolean isError() {
-        return error != null;
+    public ClipboardError getError() {
+        return error;
     }
+    
 
     /**
      * Gets the clipboard action that was performed.
      * 
-     * @return the clipboard action (READ or write)
+     * @return the clipboard action (read, write, read_image)
      */
     public ClipboardAction getAction() {
         return action;
     }
 
-    /**
-     * Gets the text content from clipboard read operations.
-     * 
-     * @return the clipboard text content, or null for write operations or errors
-     */
-    public String getText() {
-        return text;
-    }
-
-    /**
-     * Gets the error message if the operation failed.
-     * 
-     * @return the error message, or null if the operation succeeded
-     */
-    public String getError() {
-        return error;
-    }
-
-    /**
-     * Sets the clipboard action that was performed.
-     * 
-     * @param action the clipboard action
-     */
-    void setAction(ClipboardAction action) {
-        this.action = action;
-    }
-
-    /**
-     * Sets the text content for clipboard operations.
-     * 
-     * @param text the text content
-     */
-    void setText(String text) {
-        this.text = text;
-    }
-
-    /**
-     * Sets the error message if the operation failed.
-     * 
-     * @param error the error message, or null if the operation succeeded
-     */
-    void setError(String error) {
+    public void setError(ClipboardError error) {
         this.error = error;
     }
 }

@@ -3,15 +3,11 @@ package org.zkoss.zkforge.clipboard;
 import com.google.gson.annotations.Expose;
 
 /**
- * Result object for clipboard image operations containing either success data or error information.
+ * Result object for image-based clipboard operations. Read-only.
  * 
- * <p>This class extends ClipboardResult to provide additional image-specific properties
- * such as MIME type, image dimensions, and binary image data.</p>
- * 
- * <p>Success is indicated when {@code getError()} returns {@code null}.
- * Use {@code isSuccess()} for convenient success checking.</p>
+ * <p>Contains image-specific properties such as MIME type, image dimensions, and binary image data.</p>
  */
-public class ClipboardImageResult extends ClipboardResult {
+public class ClipboardImage extends ClipboardResult {
     @Expose
     private String mimeType;
     
@@ -32,15 +28,6 @@ public class ClipboardImageResult extends ClipboardResult {
      */
     public String getMimeType() {
         return mimeType;
-    }
-
-    /**
-     * Sets the MIME type of the clipboard image.
-     * 
-     * @param mimeType the image MIME type
-     */
-    void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
     }
 
     /**
@@ -80,30 +67,12 @@ public class ClipboardImageResult extends ClipboardResult {
     }
 
     /**
-     * Sets the image width in pixels.
-     * 
-     * @param width the image width
-     */
-    void setWidth(int width) {
-        this.width = width;
-    }
-
-    /**
      * Gets the image height in pixels.
      * 
      * @return the image height, or 0 if not available
      */
     public int getHeight() {
         return height;
-    }
-
-    /**
-     * Sets the image height in pixels.
-     * 
-     * @param height the image height
-     */
-    void setHeight(int height) {
-        this.height = height;
     }
 
     /**
@@ -115,23 +84,6 @@ public class ClipboardImageResult extends ClipboardResult {
         return size;
     }
 
-    /**
-     * Sets the size of the image data in bytes.
-     * 
-     * @param size the image size in bytes
-     */
-    void setSize(long size) {
-        this.size = size;
-    }
-
-    /**
-     * Sets the error message for this result.
-     * 
-     * @param error the error message
-     */
-    void setError(String error) {
-        super.setError(error);
-    }
 
     /**
      * Checks if the image is of a supported format based on MIME type.
@@ -139,6 +91,30 @@ public class ClipboardImageResult extends ClipboardResult {
      * @return true if the image format is supported, false otherwise
      */
     public boolean isSupportedFormat() {
+        return isSupportedMimeType(mimeType);
+    }
+    
+    /**
+     * Sets the MIME type of the image.
+     * 
+     * @param mimeType the image MIME type
+     */
+    void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+    
+    /**
+     * Sets the image dimensions.
+     * 
+     * @param width the image width in pixels
+     * @param height the image height in pixels
+     */
+    void setDimensions(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+    
+    private boolean isSupportedMimeType(String mimeType) {
         if (mimeType == null) return false;
         return mimeType.equals("image/png") || 
                mimeType.equals("image/jpeg") || 

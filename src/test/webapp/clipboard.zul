@@ -1,11 +1,13 @@
-<zk xmlns:h="native">
+<zk xmlns:h="native" xmlns:ca="client/attribute">
     <nodom apply="test.clipboard.ClipboardComposer">
         <h:h2>read text from clipboard</h:h2>
-        copy a text from somewhere else and click the button, it puts your copied text into the textbox below.
-        <vlayout>
+        copy a text from somewhere else and click the button, it puts your copied text into the textbox below.<h:br/>
+        <hlayout>
             <button label="read text" id="read"/>
+            <button label="read text (Safari) " ca:onclick="ClipboardHelper.readText()"/>
+        </hlayout>
+            <separator stubonly="true"/>
             <textbox readonly="true" id="pastingTarget" multiline="true" rows="5"/>
-        </vlayout>
         <h:h2>write text to clipboard</h:h2>
         click the button and press ctrl+v in the textbox below, it pastes the content from the clipboard (sent from the server-side)
         <vlayout>
@@ -66,9 +68,10 @@
             <separator height="10px"/>
             <h:div style="background-color: #f5f5f5; padding: 10px; border-radius: 4px;">
                 <h:h4 style="margin: 0 0 10px 0; color: #333;">Paste Debug Information Here:</h:h4>
-                <textbox  multiline="true" rows="8" width="100%"
+                <textbox  multiline="true" rows="8" width="40%"
                          style="font-family: monospace; font-size: 12px; background-color: white;"/>
             </h:div>
         </vlayout>
     </nodom>
+    <h:div style="height:130px"/>
 </zk>

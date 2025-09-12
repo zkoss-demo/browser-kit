@@ -6,9 +6,7 @@ import org.zkoss.zk.ui.event.*;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkforge.clipboard.*;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 
@@ -38,22 +36,21 @@ public class FormAutoFillComposer extends SelectorComposer<Component> {
         ClipboardHelper.init();
         // Listen for clipboard events on this composer's root component
         comp.addEventListener(ClipboardEvent.EVENT_NAME, this::handleClipboardEvent);
+
         comp.getDesktop().enableServerPush(true);
         showStatus("Ready - Copy some text and click 'Paste from Clipboard'", "info");
     }
-    
+
+    //onClipboardEvent listener
     public void handleClipboardEvent(org.zkoss.zk.ui.event.Event event) {
-        if (event instanceof ClipboardEvent) {
-            ClipboardEvent clipboardEvent = (ClipboardEvent) event;
-            ClipboardResult result = clipboardEvent.getClipboardResult();
-            if (result.getAction() != ClipboardAction.READ) return; // Ignore other actions
-            if (result.isSuccess()) {
-                String clipboardText = result.getText();
-                processClipboardContent(clipboardText);
-            } else {
-                showStatus("Could not read clipboard: " + result.getError(), "error");
-            }
+        ClipboardEvent clipboardEvent = (ClipboardEvent) event;
+        if (!clipboardEvent.isSuccess()){
+            showStatus("Could not read clipboard: " + ((ClipboardEvent) event).getResult().getError().getMessage(), "error");
+            return;
         }
+        if (clipboardEvent.getResult().getAction() != ClipboardAction.READ) return; // Ignore other actions
+        String clipboardText = clipboardEvent.getClipboardText().getText();
+        processClipboardContent(clipboardText);
     }
     
     @Listen("onClick = #pasteButton")
@@ -124,7 +121,7 @@ public class FormAutoFillComposer extends SelectorComposer<Component> {
     }
     
     /**
-     * Show status message with appropriate styling
+     * Show the status message with appropriate styling
      */
     private void showStatus(String message, String type) {
         statusLabel.setValue(message);

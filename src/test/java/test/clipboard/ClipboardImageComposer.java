@@ -43,14 +43,13 @@ public class ClipboardImageComposer extends SelectorComposer<Component> {
      */
     @Listen(ClipboardEvent.EVENT_NAME + " = #root")
     public void handleImageResult(ClipboardEvent event) {
-        if (event.getClipboardResult().getAction() != ClipboardAction.READ_IMAGE) return; // Ignore other actions
-        ClipboardImageResult result = event.getClipboardImageResult();
+        if (event.getResult().getAction() != ClipboardAction.READ_IMAGE) return; // Ignore other actions
+        ClipboardImage result = event.getClipboardImage();
         if (result.isSuccess() && result.hasImageData()) {
             displayImageResult(result);
             showStatus("✅ Image successfully read from clipboard!", "success");
         } else {
-            String errorMsg = result.getError() != null ? result.getError() : "Unknown error occurred";
-            showStatus("❌ Failed to read image: " + errorMsg, "error");
+            showStatus("❌ Failed to read image: " + result.getError().getMessage(), "error");
             hideImageResult();
         }
     }
@@ -58,7 +57,7 @@ public class ClipboardImageComposer extends SelectorComposer<Component> {
     /**
      * Displays the image result in the main demo area
      */
-    private void displayImageResult(ClipboardImageResult result) {
+    private void displayImageResult(ClipboardImage result) {
         try {
             // Create AImage from byte data
             AImage aImage = new AImage("clipboard-image", result.getImageData());
