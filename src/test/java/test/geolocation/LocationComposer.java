@@ -11,15 +11,14 @@ import org.zkoss.zul.Label;
 
 public class LocationComposer extends SelectorComposer {
 
-    private GeolocationHelper geoLocationHelper;
     @Wire
     private Label locationLabel;
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
-        geoLocationHelper = GeolocationHelper.getInstance();
-        geoLocationHelper.getCurrentPosition();
+        GeolocationHelper.init();
+        GeolocationHelper.getCurrentPosition();
     }
 
     private void handleLocationSuccess(GeolocationPosition position) {
@@ -42,10 +41,10 @@ public class LocationComposer extends SelectorComposer {
 
     @Listen("onClick = #getLocation")
     public void getLocation(){
-        geoLocationHelper.getCurrentPosition();
+        GeolocationHelper.getCurrentPosition();
     }
     @Listen("onClick = #dispose")
     public void dispose(){
-        geoLocationHelper.dispose();
+        GeolocationHelper.dispose();
     }
 }
