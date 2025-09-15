@@ -1,5 +1,5 @@
 # Overview
-This project is a simple ZK addon based on ZK CE (compact edition) that wraps various browser built-in JavaScript API in Java.
+This project is a simple ZK addon based on ZK CE (community edition) that wraps various browser built-in JavaScript API in Java.
 
 # The JavaScript API to wrap
 * [Geolocation API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API/Using_the_Geolocation_API)
