@@ -38,7 +38,8 @@ Both helpers implement a consistent stateless architecture with auto-initializat
 
 #### Event-Driven Communication
 ```
-Browser API → JavaScript Helper → zAu.send(desktop event) → AuService → Desktop Event → Component Listeners
+Browser API → JavaScript Helper → zAu.send(desktop event) 
+    → AuService → Desktop Event → Controller(Composer/ViewModel) Listeners
 ```
 
 ## ClipboardHelper
@@ -134,8 +135,6 @@ sequenceDiagram
 * Official
 `./release.sh official`
 
-## Publish to Maven
-[jenkins job]()
 
 ## License
 * Source Code - [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
