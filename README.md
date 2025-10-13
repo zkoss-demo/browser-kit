@@ -45,6 +45,7 @@ Browser API → JavaScript Helper → zAu.send(desktop event)
 ## ClipboardHelper
 
 The ClipboardHelper provides static access to the browser's Clipboard API for reading and writing clipboard content.
+* Secure context: This feature is available only in [secure contexts (HTTPS)](https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts)
 
 ### Usage Example
 ```java
@@ -72,6 +73,7 @@ public void handleClipboard(ClipboardEvent event) {
 ## GeolocationHelper
 
 The GeolocationHelper provides static access to the browser's Geolocation API for requesting user location.
+* Secure context: This feature is available only in secure contexts (HTTPS)
 
 ### Usage Example
 ```java

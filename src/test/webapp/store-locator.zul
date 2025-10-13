@@ -1,0 +1,121 @@
+<?page title="Store Locator Demo - GeolocationHelper"?>
+<zk>
+    <style>
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+        }
+        .store-list {
+            margin-top: 20px;
+        }
+        .closest-store {
+            background-color: #e8f5e9 !important;
+            font-weight: bold;
+        }
+        /* Highlight the closest store */
+        .z-listitem:first-child .z-listcell{
+            background: #e8f5e9;
+        }
+        .z-listitem:first-child .z-listcell-content{
+            font-weight: bold;
+        }
+    </style>
+
+    <div id="root" apply="test.geolocation.StoreLocatorComposer"
+         style="max-width: 900px; margin: 20px auto; padding: 20px;">
+
+        <!-- Header -->
+        <div sclass="header">
+            <label style="font-size: 24px; font-weight: bold;">
+                Store Locator Demo
+            </label>
+            <separator height="10px"/>
+            <label style="font-size: 14px; opacity: 0.9;">
+                Demonstrating GeolocationHelper API - Find nearby stores based on your location
+            </label>
+        </div>
+
+        <!-- Info Box -->
+        <div sclass="info-box">
+            <label style="font-weight: bold; color: #667eea;">ℹ About This Demo:</label>
+            <separator height="5px"/>
+            <label>
+                This demo showcases GeolocationHelper API by simulating a store locator.
+                Click "Find Nearby Stores" to get your current location and see stores sorted by distance.
+                Sample stores are fictional coffee shops in the San Francisco Bay Area.
+            </label>
+        </div>
+
+        <!-- Action Buttons -->
+        <hlayout spacing="10px" style="margin: 20px 0;">
+            <button id="findStoresBtn" label="Find Nearby Stores"
+                    iconSclass="z-icon-map-marker"
+                    style="background: #667eea; color: white; font-size: 14px; padding: 10px 20px;"/>
+            <button id="disposeBtn" label="Dispose Helper"
+                    style="background: #cc9d9d; padding: 10px 20px;"/>
+        </hlayout>
+
+        <!-- Status Section -->
+        <vlayout spacing="10px">
+            <label id="statusLabel"
+                   style="font-size: 16px; font-weight: bold; color: #333;"/>
+            <label id="userLocationLabel"
+                   style="font-size: 13px; color: #666; font-family: monospace;"/>
+        </vlayout>
+
+        <!-- Store List -->
+        <listbox id="storeListbox" sclass="store-list"
+                 height="400px" emptyMessage="No stores to display. Click 'Find Nearby Stores' to begin.">
+            <listhead>
+                <listheader label="#" width="50px" align="center"/>
+                <listheader label="Store Name" width="200px"/>
+                <listheader label="Address"/>
+                <listheader label="Distance" width="120px" align="right"/>
+            </listhead>
+        </listbox>
+
+        <!-- Footer Note -->
+        <div style="margin-top: 20px; padding: 15px; background: #fff3e0; border-radius: 6px;">
+<!--            <label style="font-size: 12px; color: #666;">-->
+                <html><![CDATA[
+                    <b>Note:</b> This demo requires browser geolocation permission.
+                    The closest store will be highlighted in green.
+                    Distances are calculated using the Haversine formula.
+                ]]></html>
+<!--            </label>-->
+        </div>
+
+        <!-- Technical Details -->
+        <separator height="20px"/>
+        <groupbox>
+            <caption label="GeolocationHelper API Usage"/>
+            <vlayout spacing="8px">
+                <label style="font-size: 12px; font-family: monospace; color: #555;">
+                    1. GeolocationHelper.init() - Initialize in doAfterCompose()
+                </label>
+                <label style="font-size: 12px; font-family: monospace; color: #555;">
+                    2. GeolocationHelper.getCurrentPosition() - Request user's location
+                </label>
+                <label style="font-size: 12px; font-family: monospace; color: #555;">
+                    3. @Listen(GeolocationEvent.EVENT_NAME) - Handle async results
+                </label>
+                <label style="font-size: 12px; font-family: monospace; color: #555;">
+                    4. Calculate distances and sort stores by proximity
+                </label>
+                <label style="font-size: 12px; font-family: monospace; color: #555;">
+                    5. GeolocationHelper.dispose() - Clean up resources
+                </label>
+            </vlayout>
+        </groupbox>
+    </div>
+</zk>
