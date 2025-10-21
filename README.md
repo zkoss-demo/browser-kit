@@ -4,10 +4,10 @@ This project is a simple ZK addon based on ZK CE (community edition) that wraps 
 # The JavaScript API to wrap
 * [Geolocation API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API/Using_the_Geolocation_API)
 * [Clipboard API](https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API)
-* [Notification API](https://developer.mozilla.org/en-US/docs/Web/API/Notification)
-* [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
-* [MediaDevices](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices)
-* [Drag and Drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API)
+* [Notification API](https://developer.mozilla.org/en-US/docs/Web/API/Notification) (not yet supported)
+* [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) (not yet supported)
+* [MediaDevices](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices) (not yet supported)
+* [Drag and Drop API](https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API) (not yet supported)
 
 # Run Demo Application
 Require Maven installed.
@@ -16,6 +16,26 @@ Require Maven installed.
 
 # Usage Examples
 see *.java and *.zul under src/test/
+
+
+# Install via Maven
+
+```xml
+<dependency>
+    <groupId>org.zkoss.zkforge</groupId>
+    <artifactId>browser-kit</artifactId>
+    <version>2.0.0</version>
+</dependency>
+```
+
+Include ZK CE repository
+```xml
+        <repository>
+            <id>ZK CE</id>
+            <name>ZK CE Repository</name>
+            <url>https://mavensync.zkoss.org/maven2</url>
+        </repository>
+```
 
 # Browser API Helpers Architecture
 
