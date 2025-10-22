@@ -3,8 +3,8 @@
         <h:h2>read text from clipboard</h:h2>
         copy a text from somewhere else and click the button, it puts your copied text into the textbox below.<h:br/>
         <hlayout>
-            <button label="read text" id="read"/>
-            <button label="read text (Safari) " ca:onclick="ClipboardHelper.readText()"/>
+            <button label="read text" id="read" if="${not isSafari}"/>
+            <button label="read text (Safari) " ca:onclick="ClipboardHelper.readText()" if="${isSafari}"/>
         </hlayout>
             <separator stubonly="true"/>
             <textbox readonly="true" id="pastingTarget" multiline="true" rows="5"/>

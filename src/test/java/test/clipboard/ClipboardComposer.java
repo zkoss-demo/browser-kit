@@ -1,11 +1,16 @@
 package test.clipboard;
 
-import org.zkoss.zk.ui.Component;
+import org.zkoss.web.servlet.Servlets;
+import org.zkoss.zk.ui.*;
+import org.zkoss.zk.ui.metainfo.ComponentInfo;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.*;
 import org.zkoss.zkforge.clipboard.*;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zk.ui.event.Event;
+import test.BrowserFlagSetter;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Demonstrates how to use the ClipboardHelper with AuService architecture.
@@ -13,6 +18,12 @@ import org.zkoss.zk.ui.event.Event;
 public class ClipboardComposer extends SelectorComposer<Component> {
     @Wire
     private Textbox pastingTarget;
+
+    @Override
+    public ComponentInfo doBeforeCompose(Page page, Component parent, ComponentInfo compInfo) {
+        BrowserFlagSetter.storeBrowserAttribute();
+        return super.doBeforeCompose(page, parent, compInfo);
+    }
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
