@@ -126,7 +126,7 @@ flowchart TB
         JS[JavaScript Helper]
     end
 
-    subgraph Server[ZK Server]
+    subgraph Server[Server]
         Java[Static Helper Method]
         Init[Auto-initialization]
         AU[Singleton AuService]
@@ -137,12 +137,12 @@ flowchart TB
     Init -->|3. Registers| AU
     Init -->|4. Loads| JS
 
-    style Client fill:#f0f8ff,stroke:#1565c0
-    style Server fill:#e8f5e9,stroke:#2e7d32
-    style Java fill:#ffd1dc,stroke:#c2185b
-    style Init fill:#e0f7fa,stroke:#006064
-    style AU fill:#e8f5e9,stroke:#2e7d32
-    style JS fill:#fff3e0,stroke:#ef6c00
+    style Client fill:#f0f8ff,color:black
+    style Server fill:#e8f5e9,color:black
+    style Java fill:#ffd1dc,stroke:#c2185b,color:black
+    style Init fill:#e0f7fa,stroke:#006064,color:black
+    style AU fill:#e8f5e9,stroke:#2e7d32,color:black
+    style JS fill:#fff3e0,stroke:#ef6c00,color:black
 ```
 
 **Calling**
@@ -153,7 +153,7 @@ flowchart TB
         JS[JavaScript Helper]
     end
 
-    subgraph Server[ZK Server]
+    subgraph Server[Server]
         Java[Static Helper Method]
         AU[Singleton AuService]
         Controller[Java Controller]
@@ -164,14 +164,13 @@ flowchart TB
     JS -->|3. Sends Event| AU
     AU -->|4. Posts Event| Controller
 
-    style Client fill:#f0f8ff,stroke:#1565c0
-    style Server fill:#e8f5e9,stroke:#2e7d32
-    style Java fill:#ffd1dc,stroke:#c2185b
-    style AU fill:#e8f5e9,stroke:#2e7d32
-    style JS fill:#fff3e0,stroke:#ef6c00
-    style API fill:#e3f2fd,stroke:#1565c0
-    style Controller fill:#ffecb3,stroke:#ff6f00
-
+    style Client fill:#f0f8ff,color:black
+    style Server fill:#e8f5e9,color:black
+    style Java fill:#ffd1dc,stroke:#c2185b,color:black
+    style AU fill:#e8f5e9,stroke:#2e7d32,color:black
+    style JS fill:#fff3e0,stroke:#ef6c00,color:black
+    style API fill:#e3f2fd,stroke:#1565c0,color:black
+    style Controller fill:#ffecb3,stroke:#ff6f00,color:black
 ```
 
 ### Usage Examples
