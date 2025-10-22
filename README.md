@@ -119,23 +119,59 @@ public void handleGeolocation(GeolocationEvent event) {
 - **Clean Lifecycle**: Optional `dispose()` method for explicit cleanup
 
 ### Architecture Diagram
-
+**Init** 
 ```mermaid
-sequenceDiagram
-    participant Java as Static Helper Method
-    participant Init as Auto-initialization
-    participant AU as Singleton AuService
-    participant JS as JavaScript Helper
-    participant Browser as Browser API
+flowchart TB
+    subgraph Client[Browser]
+        JS[JavaScript Helper]
+    end
 
-    Java->>Init: Call static method
-    Init->>Init: Check desktop initialization
-    Init->>AU: Add singleton AuService to desktop
-    Init->>JS: Load JavaScript helper
-    Java->>Browser: Execute API call via JS
-    Browser->>JS: Return result/error
-    JS->>AU: Send desktop event
-    AU->>Java: Post GeolocationEvent/ClipboardEvent
+    subgraph Server[ZK Server]
+        Java[Static Helper Method]
+        Init[Auto-initialization]
+        AU[Singleton AuService]
+    end
+
+    Java -->|1. Calls| Init
+    Init -->|2. Checks| Init
+    Init -->|3. Registers| AU
+    Init -->|4. Loads| JS
+
+    style Client fill:#f0f8ff,stroke:#1565c0
+    style Server fill:#e8f5e9,stroke:#2e7d32
+    style Java fill:#ffd1dc,stroke:#c2185b
+    style Init fill:#e0f7fa,stroke:#006064
+    style AU fill:#e8f5e9,stroke:#2e7d32
+    style JS fill:#fff3e0,stroke:#ef6c00
+```
+
+**Calling**
+```mermaid
+flowchart TB
+    subgraph Client[Browser]
+        API[Browser API]
+        JS[JavaScript Helper]
+    end
+
+    subgraph Server[ZK Server]
+        Java[Static Helper Method]
+        AU[Singleton AuService]
+        Controller[Java Controller]
+    end
+
+    Java -->|1. Executes| API
+    API -->|2. Returns| JS
+    JS -->|3. Sends Event| AU
+    AU -->|4. Posts Event| Controller
+
+    style Client fill:#f0f8ff,stroke:#1565c0
+    style Server fill:#e8f5e9,stroke:#2e7d32
+    style Java fill:#ffd1dc,stroke:#c2185b
+    style AU fill:#e8f5e9,stroke:#2e7d32
+    style JS fill:#fff3e0,stroke:#ef6c00
+    style API fill:#e3f2fd,stroke:#1565c0
+    style Controller fill:#ffecb3,stroke:#ff6f00
+
 ```
 
 ### Usage Examples
