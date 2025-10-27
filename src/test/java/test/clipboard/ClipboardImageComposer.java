@@ -2,9 +2,12 @@ package test.clipboard;
 
 import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zkforge.clipboard.ClipboardAction;
 import org.zkoss.zkforge.clipboard.ClipboardEvent;
 import org.zkoss.zkforge.clipboard.ClipboardHelper;
@@ -51,7 +54,7 @@ public class ClipboardImageComposer extends SelectorComposer<Component> {
     /**
      * Processes image data from the image-only clipboard helper
      */
-    @Listen(ClipboardEvent.EVENT_NAME + " = readImageButton")
+    @Listen(ClipboardEvent.EVENT_NAME + "= #readImageButton")
     public void handleImageResult(ClipboardEvent event) {
         if (event.getResult().getAction() != ClipboardAction.READ_IMAGE) return; // Ignore other actions
         ClipboardImage result = event.getClipboardImage();
