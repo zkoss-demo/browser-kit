@@ -55,13 +55,13 @@ class ClipboardHelper {
      * Reads image data from the clipboard
      * Uses the modern clipboard.read() API to access ClipboardItem objects
      */
-    static readImage() {
+    static readImage(uuid) {
         // Check if the modern clipboard API is supported
         if (!navigator.clipboard || !navigator.clipboard.read) {
             this.fireEventToServer({
                 action: 'READ_IMAGE',
                 error: {message: 'Clipboard read() API not supported by this browser. Requires Chrome 88+, Firefox 127+, or Edge 88+.'}
-            });
+            },uuid);
             return;
         }
 
@@ -74,7 +74,7 @@ class ClipboardHelper {
                         if (type.startsWith('image/')) {
                             // Found an image, process it
                             return item.getType(type).then(blob => {
-                                return this.processImageBlob(blob, type);
+                                return this.processImageBlob(blob, type, uuid);
                             });
                         }
                     }
@@ -84,14 +84,14 @@ class ClipboardHelper {
                 this.fireEventToServer({
                     action: 'READ_IMAGE',
                     error: {message:'No image data found in clipboard'}
-                });
+                },uuid);
             })
             .catch(error => {
                 console.error(error);
                 this.fireEventToServer({
                     action: 'READ_IMAGE',
                     error: this.extractError(error)
-                });
+                },uuid);
             });
     }
 
@@ -100,7 +100,7 @@ class ClipboardHelper {
      * @param {Blob} blob - The image blob from clipboard
      * @param {string} mimeType - The MIME type of the image
      */
-    static processImageBlob(blob, mimeType) {
+    static processImageBlob(blob, mimeType, uuid) {
         this.blobToBase64(blob)
             .then(base64Data => {
                 // Create image to get dimensions
@@ -113,7 +113,7 @@ class ClipboardHelper {
                         size: blob.size,
                         width: img.width,
                         height: img.height
-                    });
+                    },uuid);
                 };
                 
                 img.onerror = () => {
@@ -125,7 +125,7 @@ class ClipboardHelper {
                         size: blob.size,
                         width: 0,
                         height: 0
-                    });
+                    },uuid);
                 };
                 
                 // Create object URL and load image
@@ -169,8 +169,13 @@ class ClipboardHelper {
      * @param {Object} data - The data to send to the server
      * @private
      */
-    static fireEventToServer(data) {
-        zAu.send(new zk.Event(zk.Desktop._dt, ClipboardHelper.CLIPBOARD_ACTION_EVENT, data));
+    static fireEventToServer(data,uuid) {
+		if(uuid){
+			let wgt = zk.$("#"+uuid);
+	        zAu.send(new zk.Event(wgt, ClipboardHelper.CLIPBOARD_ACTION_EVENT, data));
+		}else{
+	        zAu.send(new zk.Event(zk.Desktop._dt, ClipboardHelper.CLIPBOARD_ACTION_EVENT, data));
+		}
     }
 
     static extractError(error){

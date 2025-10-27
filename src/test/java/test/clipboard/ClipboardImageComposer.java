@@ -3,9 +3,17 @@ package test.clipboard;
 import org.zkoss.image.AImage;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
-import org.zkoss.zk.ui.select.annotation.*;
-import org.zkoss.zkforge.clipboard.*;
-import org.zkoss.zul.*;
+import org.zkoss.zk.ui.select.annotation.Listen;
+import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zkforge.clipboard.ClipboardAction;
+import org.zkoss.zkforge.clipboard.ClipboardEvent;
+import org.zkoss.zkforge.clipboard.ClipboardHelper;
+import org.zkoss.zkforge.clipboard.ClipboardImage;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Div;
+import org.zkoss.zul.Image;
+import org.zkoss.zul.Label;
+import org.zkoss.zul.NoDOM;
 
 /**
  * Demonstrates how to use the ClipboardHelper for reading images from clipboard.
@@ -20,6 +28,8 @@ public class ClipboardImageComposer extends SelectorComposer<Component> {
     private Div imageContainer;
     @Wire
     private Image clipboardImage;
+    @Wire
+    private Button readImageButton;
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
@@ -34,14 +44,14 @@ public class ClipboardImageComposer extends SelectorComposer<Component> {
     public void readImage() {
         showStatus("📋 Reading image from clipboard...", "info");
         hideImageResult();
-        ClipboardHelper.readImage();
+        ClipboardHelper.readImage(readImageButton);
     }
     
 
     /**
      * Processes image data from the image-only clipboard helper
      */
-    @Listen(ClipboardEvent.EVENT_NAME + " = #root")
+    @Listen(ClipboardEvent.EVENT_NAME + " = readImageButton")
     public void handleImageResult(ClipboardEvent event) {
         if (event.getResult().getAction() != ClipboardAction.READ_IMAGE) return; // Ignore other actions
         ClipboardImage result = event.getClipboardImage();

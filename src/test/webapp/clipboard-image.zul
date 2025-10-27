@@ -1,71 +1,74 @@
 <zk xmlns:h="native" xmlns:ca="client/attribute">
-    <nodom id="root" apply="test.clipboard.ClipboardImageComposer">
-        <h:h1>Clipboard Image Reader Demo</h:h1>
-        
-        <h:h2>📋 Read Image from Clipboard</h:h2>
-        <h:p>
-            <h:strong>Instructions:</h:strong>
-            <h:br/>1. Copy an image to your clipboard (screenshot, copy image from web page, etc.)
-            <h:br/>2. Click the "Read Image from Clipboard" button
-            <h:br/>3. The image will appear below with metadata information
-        </h:p>
-        
-        <h:div style="margin: 20px 0;">
-            <button label="📖 Read Image from Clipboard" id="readImageButton" 
-                    style="font-size: 16px; padding: 10px 20px;"/>
-            <button label="📖 Read Image from Clipboard (Safari) " ca:onclick="ClipboardHelper.readImage()"/>
-        </h:div>
-        
-        <!-- Status messages -->
-        <div id="statusContainer">
-            <label id="statusMessage" visible="false" style="display: block;"/>
-        </div>
-        
-        <!-- Image display area -->
-        <div id="imageContainer" visible="false">
-            <h:h3>📷 Clipboard Image</h:h3>
-            <image id="clipboardImage" class="image-preview"/>
-            
-            <h:h4>📊 Image Information</h:h4>
-            <div class="image-info">
-                <h:div><h:strong>MIME Type:</h:strong> <label id="mimeTypeInfo">-</label></h:div>
-                <h:div><h:strong>Dimensions:</h:strong> <label id="dimensionsInfo">-</label></h:div>
-                <h:div><h:strong>File Size:</h:strong> <label id="fileSizeInfo">-</label></h:div>
-                <h:div><h:strong>Supported Format:</h:strong> <label id="supportedInfo">-</label></h:div>
-            </div>
-        </div>
-    </nodom>
-    <style>
-        .image-preview {
-        max-width: 400px;
-        max-height: 300px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 4px;
-        margin: 10px 0;
-        }
-        .image-info {
-        font-family: monospace;
-        background-color: #f5f5f5;
-        padding: 8px;
-        border-radius: 4px;
-        margin: 10px 0;
-        }
-        .error-message {
-        color: #d32f2f;
-        background-color: #ffebee;
-        padding: 8px;
-        border-radius: 4px;
-        border-left: 4px solid #d32f2f;
-        margin: 10px 0;
-        }
-        .success-message {
-        color: #388e3c;
-        background-color: #e8f5e9;
-        padding: 8px;
-        border-radius: 4px;
-        border-left: 4px solid #388e3c;
-        margin: 10px 0;
-        }
-    </style>
+	<div>
+	
+		<nodom id="root" apply="test.clipboard.ClipboardImageComposer">
+			<h:h1>Clipboard Image Reader Demo</h:h1>
+			
+			<h:h2>📋 Read Image from Clipboard</h:h2>
+			<h:p>
+				<h:strong>Instructions:</h:strong>
+				<h:br/>1. Copy an image to your clipboard (screenshot, copy image from web page, etc.)
+				<h:br/>2. Click the "Read Image from Clipboard" button
+				<h:br/>3. The image will appear below with metadata information
+			</h:p>
+			
+			<h:div style="margin: 20px 0;">
+				<button label="📖 Read Image from Clipboard" id="readImageButton" 
+						style="font-size: 16px; padding: 10px 20px;"/>
+				<button label="📖 Read Image from Clipboard (Safari) " ca:onclick="ClipboardHelper.readImage(zk.$('$readImageButton').uuid)"/>
+			</h:div>
+			
+			<!-- Status messages -->
+			<div id="statusContainer">
+				<label id="statusMessage" visible="false" style="display: block;"/>
+			</div>
+			
+			<!-- Image display area -->
+			<div id="imageContainer" visible="false">
+				<h:h3>📷 Clipboard Image</h:h3>
+				<image id="clipboardImage" class="image-preview"/>
+				
+				<h:h4>📊 Image Information</h:h4>
+				<div class="image-info">
+					<h:div><h:strong>MIME Type:</h:strong> <label id="mimeTypeInfo">-</label></h:div>
+					<h:div><h:strong>Dimensions:</h:strong> <label id="dimensionsInfo">-</label></h:div>
+					<h:div><h:strong>File Size:</h:strong> <label id="fileSizeInfo">-</label></h:div>
+					<h:div><h:strong>Supported Format:</h:strong> <label id="supportedInfo">-</label></h:div>
+				</div>
+			</div>
+		</nodom>
+		<style>
+			.image-preview {
+			max-width: 400px;
+			max-height: 300px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			padding: 4px;
+			margin: 10px 0;
+			}
+			.image-info {
+			font-family: monospace;
+			background-color: #f5f5f5;
+			padding: 8px;
+			border-radius: 4px;
+			margin: 10px 0;
+			}
+			.error-message {
+			color: #d32f2f;
+			background-color: #ffebee;
+			padding: 8px;
+			border-radius: 4px;
+			border-left: 4px solid #d32f2f;
+			margin: 10px 0;
+			}
+			.success-message {
+			color: #388e3c;
+			background-color: #e8f5e9;
+			padding: 8px;
+			border-radius: 4px;
+			border-left: 4px solid #388e3c;
+			margin: 10px 0;
+			}
+		</style>
+	</div>
 </zk>

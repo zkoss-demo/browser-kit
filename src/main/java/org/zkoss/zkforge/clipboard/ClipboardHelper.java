@@ -62,11 +62,22 @@ public class ClipboardHelper {
     /**
      * Read image from the system clipboard.
      * Results are delivered asynchronously via {@link ClipboardEvent}.
+     * The event is sent to the root element of the ZK first desktop in the page
      * 
      * @throws IllegalStateException if called outside an execution context
      */
     public static void readImage() {
         Clients.evalJavaScript("ClipboardHelper.readImage()");
+    }
+    
+    /**
+     * Read image from the system clipboard.
+     * Results are delivered asynchronously via {@link ClipboardEvent}.
+     * 
+     * @throws IllegalStateException if called outside an execution context
+     */
+    public static void readImage(Component comp) {
+    	Clients.evalJavaScript("ClipboardHelper.readImage('"+comp.getUuid()+"')");
     }
 
     /**
