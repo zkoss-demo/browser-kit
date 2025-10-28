@@ -7,6 +7,6 @@
             Parent page sends clipboard events to a desktop event queue, and the child subscribes to the same event queue.
             See <n:a href="https://docs.zkoss.org/zk_dev_ref/ui_patterns/inter_page_communication">inter-page communication</n:a>
         </div>
-        <include src="specified-target-content.zul" width="100%"/>
+        <include src="parent-child.zul" width="100%"/>
     </div>
 </zk>
