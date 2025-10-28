@@ -15,6 +15,11 @@ Require Maven installed.
 2. Navigate to `http://localhost:8080/browser-kit/`
 
 # Usage Examples
+3 main steps:
+1. Initialize the helper in a controller's lifecycle
+2. Listen to the corresponding event
+3. Call its methods in an event listener
+
 see *.java and *.zul under src/test/
 
 
@@ -68,14 +73,17 @@ The ClipboardHelper provides static access to the browser's Clipboard API for re
 * Secure context: This feature is available only in [secure contexts (HTTPS)](https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts)
 
 ### Usage Example
+
+1. Init
 ```java
-// Writing to clipboard
-ClipboardHelper.writeText("Hello World");
+    public void doAfterCompose(Component comp) throws Exception {
+        super.doAfterCompose(comp);
+        ClipboardHelper.init();
+    }
+```
 
-// Reading from clipboard (results via events)
-ClipboardHelper.readText();
-
-// Listening for results
+2. Listening for results
+```java
 @Listen(ClipboardEvent.EVENT_NAME + " = #root")
 public void handleClipboard(ClipboardEvent event) {
     ClipboardResult result = event.getClipboardResult();
@@ -83,6 +91,17 @@ public void handleClipboard(ClipboardEvent event) {
         processClipboardContent(result.getText());
     }
 }
+```
+
+3. Call operation methods
+
+```java
+// Writing to clipboard
+ClipboardHelper.writeText("Hello World");
+
+// Reading from clipboard (results via events)
+ClipboardHelper.readText();
+
 ```
 
 ### Important Notes
