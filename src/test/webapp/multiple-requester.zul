@@ -1,0 +1,41 @@
+<zk  xmlns:n="native" xmlns:c="client" xmlns:ca="client/attribute" xmlns:x="xhtml">
+    <div apply="test.clipboard.MultipleRequesterComposer">
+        <n:h2>Multiple Forms Clipboard Access with Targeted Event Delivery</n:h2>
+        <n:h3>Scenario</n:h3>
+        <n:p>
+            Multiple forms on the same page need to request clipboard data independently. With the broadcast approach,
+            all clipboard events are sent to a desktop event queue, causing all form controllers to receive every event.
+            This requires complex filtering logic in each form to differentiate which events belong to them.
+        </n:p>
+
+        <n:h3>Solution: Targeted Clipboard API (Since 2.1.0)</n:h3>
+        <n:p>
+            Instead of broadcasting clipboard events to all root components, use the targeted clipboard API to deliver events
+            directly to the specified component. This eliminates event pollution and cross-form interference entirely.
+        </n:p>
+
+
+        <n:h3>Try it: Click "read text" on multiple forms </n:h3>
+        <n:p>
+            Each form will receive only its own clipboard data. No cross-form interference!
+        </n:p>
+
+        <idspace forEach="${[1,2,3]}">
+            <div apply="test.clipboard.FormComposer"
+                 style="border: 1px solid #ddd; margin: 10px 0; padding: 10px; background-color: #fafafa; border-radius: 4px;">
+                <n:h2 style="margin-top: 0; color: #333;">Form ${each}</n:h2>
+                <button label="read text" id="read" style="padding: 6px 12px; cursor: pointer;"/>
+                <textbox readonly="true" id="pastingTarget" multiline="true" rows="5" style="margin-top: 8px; width: 100%; font-family: monospace; font-size: 12px;"/>
+            </div>
+        </idspace>
+
+        <n:div style="margin-top: 20px; padding: 12px; background-color: #f0f7ff; border-left: 4px solid #0066cc; font-size: 12px; color: #333;">
+            <n:strong>API Methods:</n:strong>
+            <n:ul>
+                <n:li><n:code>ClipboardHelper.readTextTo(Component)</n:code> - Read text, deliver to component</n:li>
+                <n:li><n:code>ClipboardHelper.readImageTo(Component)</n:code> - Read image, deliver to component</n:li>
+                <n:li><n:code>ClipboardHelper.writeTextTo(Component, String)</n:code> - Write text, deliver confirmation to component</n:li>
+            </n:ul>
+        </n:div>
+    </div>
+</zk>

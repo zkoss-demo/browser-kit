@@ -109,6 +109,84 @@ ClipboardHelper.readText();
 
 ⚠️ **Security concern**: When handling clipboard content, sanitize user input to prevent potential security vulnerabilities.
 
+### Targeted Clipboard Operations (Since 2.1.0)
+
+For scenarios with multiple forms or components requesting clipboard access simultaneously, use the **targeted clipboard API** to deliver events directly to the requesting component instead of broadcasting to all components.
+
+#### Why Targeted Delivery?
+
+When multiple forms on a page need clipboard access:
+- **Broadcast approach** (original): All components receive all clipboard events → requires manual filtering and flag management
+- **Targeted approach** (new): Each component receives only ITS own clipboard events → no filtering needed, no cross-form interference
+
+#### API Architecture
+
+The clipboard operations follow a **unified delegation pattern**:
+- **Primary methods** (`readTextTo()`, `readImageTo()`, `writeTextTo()`): Accept a target component (or `null` for broadcast)
+- **Broadcast methods** (`readText()`, `readImage()`, `writeText()`): Delegate to primary methods with `null` target
+- **Single source of truth**: All operations go through the targeted methods
+
+This design eliminates code duplication and provides a clean API:
+
+```java
+// Broadcast - delegates to readTextTo(null)
+ClipboardHelper.readText();
+
+// Targeted - primary implementation
+ClipboardHelper.readTextTo(Component targetComponent);
+
+// Same pattern for images and writes
+ClipboardHelper.readImage();        // → readImageTo(null)
+ClipboardHelper.readImageTo(Component);
+
+ClipboardHelper.writeText(String);  // → writeTextTo(null, String)
+ClipboardHelper.writeTextTo(Component, String);
+```
+
+#### Targeted Usage Example
+
+```java
+public class FormComposer extends SelectorComposer<Component> {
+    @Wire
+    private Textbox pastingTarget;
+
+    @Override
+    public void doAfterCompose(Component comp) throws Exception {
+        super.doAfterCompose(comp);
+        ClipboardHelper.init();
+
+        // Listen for clipboard events - events are automatically targeted to this component
+        pastingTarget.addEventListener(ClipboardEvent.EVENT_NAME, (ClipboardEvent event) -> {
+            if (event.isSuccess() && event.isTextResult()) {
+                // Safe to process - event is guaranteed for this component only
+                pastingTarget.setValue(event.getClipboardText().getText());
+            }
+        });
+    }
+
+    @Listen("onClick = #read")
+    public void read() {
+        // Use targeted API - delivers result only to THIS component
+        ClipboardHelper.readTextTo(pastingTarget);
+    }
+}
+```
+
+#### Benefits of Targeted Delivery
+
+| Feature | Broadcast API | Targeted API |
+|---------|--|--|
+| **Event Delivery** | All root components | Target component only |
+| **Multiple Forms** | Events broadcast to all | No interference |
+| **Code Complexity** | Flags/IDs needed for filtering | No filtering required |
+| **Concurrent Requests** | Potential race conditions | Naturally concurrent-safe |
+| **Use Case** | Global clipboard monitoring | Form-specific operations |
+| **How to Use** | `readText()` | `readTextTo(self)` or `readTextTo(null)` for broadcast |
+
+#### Full Example
+
+See [multiple-requester.zul](src/test/webapp/multiple-requester.zul) and [FormComposer.java](src/test/java/test/clipboard/FormComposer.java) for a complete working example with 3 forms requesting clipboard simultaneously.
+
 ## GeolocationHelper
 
 The GeolocationHelper provides static access to the browser's Geolocation API for requesting user location.
