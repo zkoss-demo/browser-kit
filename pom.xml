@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.zkoss.zkforge</groupId>
     <artifactId>browser-kit</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0</version>
     <properties>
         <zk.version>9.6.0</zk.version>
         <maven.compiler.source>11</maven.compiler.source>
