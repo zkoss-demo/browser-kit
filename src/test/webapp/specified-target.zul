@@ -1,0 +1,12 @@
+<zk  xmlns:n="native" xmlns:c="client" xmlns:ca="client/attribute" xmlns:x="xhtml">
+    <div apply="test.clipboard.ClipboardParentComposer">
+        <div style="border: solid 1px; padding:1em">
+            <n:h2>Scenario</n:h2>
+            According to the current design, the inner(child) page requests a clipboard operation, and the ClipboardHelper sends events to the page root components. But the inner page cannot access the root component, and it's not recommended to access the parent component directly to add an event listener for modularity principle.
+            <n:h2>Solution</n:h2>
+            Parent page sends clipboard events to a desktop event queue, and the child subscribes to the same event queue.
+            See <n:a href="https://docs.zkoss.org/zk_dev_ref/ui_patterns/inter_page_communication">inter-page communication</n:a>
+        </div>
+        <include src="specified-target-content.zul" width="100%"/>
+    </div>
+</zk>

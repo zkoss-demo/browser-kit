@@ -1,0 +1,12 @@
+<zk>
+<!-- this child(inner) doesn't know which parent will include it in the runtime.
+For modular design, it's better not directly to add an event listener to its parent component.  -->
+    <div apply="test.clipboard.ClipboardChildComposer" style="border: 2px solid">
+        By default, ClipboardHelper sends its events to the page root components.
+        <hlayout>
+            <button label="read text" id="read"/>
+        </hlayout>
+        <separator stubonly="true"/>
+        <textbox readonly="true" id="pastingTarget" multiline="true" rows="5"/>
+    </div>
+</zk>
