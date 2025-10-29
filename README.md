@@ -279,16 +279,10 @@ flowchart TB
 # Release Process
 1. change version in `pom.xml` to official version
 2. run [release](release/release)
-3. set tag in GitHub as version (e.g. `v1.0.0`)
+3. set tag in GitHub as the version (e.g. `v1.0.0`)
 4. Publish to ZK Maven CE repository with jekins3/PBFUM
 
-## Build jar
-* freshly
-`./release.sh`
+* a simple project, no need freshly version
 
-* Official
-`./release.sh official`
-
-
-## License
+# License
 * Source Code - [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
