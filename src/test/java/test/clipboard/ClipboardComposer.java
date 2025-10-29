@@ -1,16 +1,12 @@
 package test.clipboard;
 
-import org.zkoss.web.servlet.Servlets;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.metainfo.ComponentInfo;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.*;
 import org.zkoss.zkforge.clipboard.*;
 import org.zkoss.zul.Textbox;
-import org.zkoss.zk.ui.event.Event;
 import test.BrowserFlagSetter;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Demonstrates how to use the ClipboardHelper with AuService architecture.

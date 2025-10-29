@@ -1,9 +1,9 @@
-<zk  xmlns:n="native" xmlns:c="client" xmlns:ca="client/attribute" xmlns:x="xhtml">
+<zk xmlns:n="native" xmlns:c="client" xmlns:ca="client/attribute" xmlns:x="xhtml">
     <div apply="test.clipboard.MultipleRequesterComposer">
         <n:h2>Multiple Forms Clipboard Access with Targeted Event Delivery</n:h2>
         <n:h3>Scenario</n:h3>
         <n:p>
-            Multiple forms on the same page need to request clipboard data independently. With the broadcast approach,
+            Multiple forms on the same page need to request clipboard data independently. With the traditional broadcast approach,
             all clipboard events are sent to a desktop event queue, causing all form controllers to receive every event.
             This requires complex filtering logic in each form to differentiate which events belong to them.
         </n:p>

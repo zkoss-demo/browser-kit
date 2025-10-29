@@ -39,33 +39,84 @@ public class ClipboardHelper {
 
     /**
      * Write text to the system clipboard.
-     * 
+     * Results are delivered asynchronously via {@link ClipboardEvent}.
+     *
      * @param text the text to write to the clipboard
+     * @throws IllegalStateException if called outside an execution context
      */
     public static void writeText(String text) {
-        if (text == null)  return;
+        writeTextTo(null, text);
+    }
+
+    /**
+     * Write text to the system clipboard and deliver confirmation event to a specific component.
+     * Results are delivered asynchronously via {@link ClipboardEvent} to the target component only.
+     * If target is null, broadcasts to the desktop.
+     *
+     * @param targetComponent the component that will receive the clipboard write confirmation event,
+     *                         or null to broadcast to the desktop
+     * @param text the text to write to the clipboard
+     * @throws IllegalStateException if called outside an execution context
+     */
+    public static void writeTextTo(Component targetComponent, String text) {
+        if (text == null) return;
+        ensureExecutionAvailable();
         // Escape single quotes to prevent JavaScript syntax errors
         String escapedText = text.replace("'", "\\'").replace("\n", "\\n").replace("\r", "\\r");
+        String uuid = targetComponent == null ? null : targetComponent.getUuid();
+        Clients.evalJavaScript("ClipboardHelper.setTargetComponentUuid('" + uuid + "')");
         Clients.evalJavaScript("ClipboardHelper.writeText('" + escapedText + "')");
     }
 
     /**
      * Read text from the system clipboard.
      * Results are delivered asynchronously via {@link ClipboardEvent}.
-     * 
+     *
      * @throws IllegalStateException if called outside an execution context
      */
     public static void readText() {
+        readTextTo(null);
+    }
+
+    /**
+     * Read text from the system clipboard and deliver the result event to a specific component.
+     * Results are delivered asynchronously via {@link ClipboardEvent} to the target component only.
+     * If target is null, broadcasts to the desktop.
+     *
+     * @param targetComponent the component that will receive the clipboard read result event,
+     *                         or null to broadcast to the desktop
+     * @throws IllegalStateException if called outside an execution context
+     */
+    public static void readTextTo(Component targetComponent) {
+        ensureExecutionAvailable();
+        String uuid = targetComponent == null? null : targetComponent.getUuid();
+        Clients.evalJavaScript("ClipboardHelper.setTargetComponentUuid('" + uuid + "')");
         Clients.evalJavaScript("ClipboardHelper.readText()");
     }
 
     /**
      * Read image from the system clipboard.
      * Results are delivered asynchronously via {@link ClipboardEvent}.
-     * 
+     *
      * @throws IllegalStateException if called outside an execution context
      */
     public static void readImage() {
+        readImageTo(null);
+    }
+
+    /**
+     * Read image from the system clipboard and deliver the result event to a specific component.
+     * Results are delivered asynchronously via {@link ClipboardEvent} to the target component only.
+     * If target is null, broadcasts to the desktop.
+     *
+     * @param targetComponent the component that will receive the clipboard image read result event,
+     *                         or null to broadcast to the desktop
+     * @throws IllegalStateException if called outside an execution context
+     */
+    public static void readImageTo(Component targetComponent) {
+        ensureExecutionAvailable();
+        String uuid = targetComponent == null ? null : targetComponent.getUuid();
+        Clients.evalJavaScript("ClipboardHelper.setTargetComponentUuid('" + uuid + "')");
         Clients.evalJavaScript("ClipboardHelper.readImage()");
     }
 

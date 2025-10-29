@@ -1,5 +1,6 @@
 class ClipboardHelper {
     static CLIPBOARD_ACTION_EVENT = 'onClipboardAction';
+    static targetComponentUuid; //if null, sending to the current desktop
 
     /**
      * Writes text to the clipboard
@@ -170,10 +171,49 @@ class ClipboardHelper {
      * @private
      */
     static fireEventToServer(data) {
-        zAu.send(new zk.Event(zk.Desktop._dt, ClipboardHelper.CLIPBOARD_ACTION_EVENT, data));
+        zAu.send(new zk.Event(this.getEventTarget(), ClipboardHelper.CLIPBOARD_ACTION_EVENT, data));
     }
 
     static extractError(error){
         return {code: error.code, message: error.message};
     }
+
+    /**
+     * Sets the target component UUID for the next clipboard operation.
+     * This enables targeted event delivery - the clipboard event will be sent to the specific
+     * component instead of broadcasting to the desktop event queue.
+     *
+     * This method is called from Java via Clients.evalJavaScript() when using the
+     * readTextTo(), readImageTo(), or writeTextTo() APIs.
+     *
+     * @param {string} uuid - The UUID of the target ZK component. If null or undefined,
+     *                         events will be broadcast to the desktop.
+     * @private
+     */
+    static setTargetComponentUuid(uuid){
+        ClipboardHelper.targetComponentUuid = uuid;
+    }
+
+    /**
+     * Gets the event target for clipboard operations.
+     * Returns the widget matching the target component UUID if set, otherwise returns
+     * the current desktop for broadcast delivery.
+     *
+     * This method is used internally by fireEventToServer() to determine where
+     * clipboard events should be sent:
+     * - If targetComponentUuid is set: delivers event to that specific widget
+     * - If targetComponentUuid is null: delivers event to desktop (broadcast)
+     *
+     * @returns {Object} Either the target ZK widget or zk.Desktop._dt (the desktop)
+     * @private
+     */
+    static getEventTarget(){
+        let widget = zk.Widget.$('#' +  ClipboardHelper.targetComponentUuid);
+        if (widget) {
+            return widget;
+        }else{
+            return zk.Desktop._dt;
+        }
+    }
+
 }

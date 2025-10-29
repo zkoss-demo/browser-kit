@@ -3,6 +3,7 @@ package org.zkoss.zkforge.clipboard;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.zkoss.zk.au.AuRequest;
+import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 
 import java.util.Base64;
@@ -13,10 +14,27 @@ public class ClipboardEvent extends Event {
     private ClipboardResult result;
     protected static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
-    public ClipboardEvent(ClipboardResult result) {
-        // null target indicates the event is sent to all root components
-        super(EVENT_NAME, null);
+    /**
+     * Creates a ClipboardEvent with an optional target component.
+     * If target is null, the event is broadcast to all root components (desktop event queue).
+     * If target is specified, the event is delivered only to that component.
+     *
+     * @param result the clipboard operation result
+     * @param target the target component to receive this event, or null to broadcast to desktop
+     */
+    public ClipboardEvent(ClipboardResult result, Component target) {
+        super(EVENT_NAME, target);
         this.result = result;
+    }
+
+    /**
+     * Creates a ClipboardEvent that broadcasts to all root components (desktop event queue).
+     * This constructor maintains backward compatibility with existing code.
+     *
+     * @param result the clipboard operation result
+     */
+    public ClipboardEvent(ClipboardResult result) {
+        this(result, null);
     }
 
     public static ClipboardEvent getEvent(AuRequest request) {
@@ -32,7 +50,7 @@ public class ClipboardEvent extends Event {
             result = new ClipboardText();
             result.setError(new ClipboardError(ClipboardError.SERVER_ERROR, "Failed to parse clipboard response"));
         }
-        return new ClipboardEvent(result);
+        return new ClipboardEvent(result, request.getComponent());
     }
 
     /**

@@ -9,22 +9,31 @@ import org.zkoss.zul.Textbox;
 import test.BrowserFlagSetter;
 
 /**
+ * Form composer demonstrating targeted clipboard event delivery.
+ *
+ * This example uses the ClipboardHelper.readTextTo(Component) API to request
+ * clipboard data with targeting to this specific component. The clipboard event
+ * is delivered only to this form, not broadcast to all components on the page.
+ *
+ * This allows multiple forms to request clipboard data simultaneously without
+ * interference or need for external filtering logic.
  */
 public class FormComposer extends SelectorComposer<Component> {
     @Wire
     private Textbox pastingTarget;
-    private boolean requestingClipboard = false;
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
-        ClipboardHelper.init(); // Initialize the ClipboardHelper
-        // Listen for clipboard events on this composer's root component
-        comp.addEventListener(ClipboardEvent.EVENT_NAME, (ClipboardEvent event)->
-        {
-            if (!event.isSuccess()) System.err.println("Error: " + event.getResult().getError().getMessage());
-            if (event.isTextResult()
-                && event.getResult().getAction() == ClipboardAction.READ) {
+
+        // Listen for clipboard events targeted to this component
+        // With readTextTo(), events are automatically targeted, so filtering is minimal
+        pastingTarget.addEventListener(ClipboardEvent.EVENT_NAME, (ClipboardEvent event) -> {
+            if (!event.isSuccess()) {
+                System.err.println("Error: " + event.getResult().getError().getMessage());
+            }
+            // Since the event is targeted to this component only, we receive it only if WE requested it
+            if (event.isTextResult() && event.getResult().getAction() == ClipboardAction.READ) {
                 pastingTarget.setValue(event.getClipboardText().getText());
             }
         });
@@ -32,7 +41,9 @@ public class FormComposer extends SelectorComposer<Component> {
 
     @Listen("onClick = #read")
     public void read() {
-        ClipboardHelper.readText();
+        // Use readTextTo() to deliver clipboard result only to THIS component
+        // This eliminates event pollution and avoids cross-form interference
+        ClipboardHelper.readTextTo(pastingTarget);
     }
 
 }
